@@ -36,6 +36,9 @@ let session = enigma.create({
 
 At the moment this project includes only mixins that are extending the `enigma.js` `Doc` object. After the mixin is imported a new set of functions will be available in the `Doc` instance.
 
+
+![mixin](https://raw.githubusercontent.com/countnazgul/enigma-mixin/master/src/images/mixin.png)
+
 ```javascript
 let global = await session.open()
 let qDoc = await global.openDoc('C:\\Users\\User1\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Management.qvf')
