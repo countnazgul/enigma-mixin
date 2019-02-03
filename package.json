@@ -6,7 +6,7 @@
   "author": "Stefan Stoichev / sstoichev.eu /stefan.stoichev@gmail.com / @countnazgul",
   "license": "MIT",
   "scripts": {
-    "test": "set TERM=dumb && jest --verbose=false",
+    "test": "jest",
     "build-test": "rollup --config",
     "build": "rollup -c && cross-env NODE_ENV=production rollup -c",
     "jsdoc": "jsdoc ./src -c ./jsdoc-config.json -r -d ./jsdoc"
