@@ -1,11 +1,12 @@
 const enigma = require('enigma.js');
 const WebSocket = require('ws');
 const schema = require('enigma.js/schemas/12.20.0.json');
-const docMixin = require('../src/main.js');
+// const docMixin = require('../src/main.js');
+const docMixin = require('../dist/enigma-mixin.min.js');
 const OS = require('os')
 
 const OSUser = OS.userInfo().username;
-const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Management1.qvf`
+const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Management.qvf`
 
 let qSession;
 let qGlobal;
@@ -81,5 +82,83 @@ describe('Selectioins', async function () {
 
     expect(a2.qSelectionObject.qSelections[0].qSelected).toBe('Operations')
   });
+
+});
+
+describe('Tables and fields', async function () {
+  it('Document to contain more than 1 table', async function () {
+    let qDoc = await qGlobal.openDoc(testDoc)
+    let tables = await qDoc.mixin.qTablesAndFields.getTables()
+
+    let tablesIndex = tables.indexOf("Helpdesk Cases")
+
+    expect(tables.length).toBeGreaterThan(1)
+    expect(tablesIndex).toBeGreaterThan(-1)
+  });
+
+  it('Document to contain more than 1 field', async function () {
+    let qDoc = await qGlobal.openDoc(testDoc)
+    let fields = await qDoc.mixin.qTablesAndFields.getFields()
+
+    let fieldIndex = fields.indexOf("Cases Open/Closed")
+
+    expect(fields.length).toBeGreaterThan(1)
+    expect(fieldIndex).toBeGreaterThan(-1)
+  });
+
+  it('Returns array of fields <-> tables', async function () {
+    let qDoc = await qGlobal.openDoc(testDoc)
+    let tablesAndFields = await qDoc.mixin.qTablesAndFields.getTablesAndFields()
+
+    let field = tablesAndFields.filter(function (f) {
+      return (f.field == 'Case Count' && f.table == "Helpdesk Cases")
+    })
+
+    expect(tablesAndFields.length).toBeGreaterThan(1)
+    expect(field.length).toBe(1)
+  });
+
+});
+
+describe('Variables', async function () {
+  it('Document to contain more than 1 variable', async function () {
+    let qDoc = await qGlobal.openDoc(testDoc)
+    let allVariables = await qDoc.mixin.qVariables.getAllVariables()
+
+    expect(allVariables.length).toBeGreaterThan(1)
+  });
+
+  it('Create new variable', async function () {
+    let qDoc = await qGlobal.openDoc(testDoc)
+    let newVariable = {
+      variableName: 'Test Variable',
+      variableComment: 'Commenting Test Variable',
+      variableDefinition: 'sum(100)'
+    }
+
+    let createVariable = await qDoc.mixin.qVariables.createVariable(newVariable)
+    let allVariables = await qDoc.mixin.qVariables.getAllVariables()
+
+    let createdVariable = allVariables.filter(function (v) {
+      return v.qName == newVariable.variableName
+    })[0]
+
+    expect(createdVariable.qName).toBe(newVariable.variableName)
+  });
+
+  it('Update variable name', async function () {
+    let qDoc = await qGlobal.openDoc(testDoc)
+    let allVariables = await qDoc.mixin.qVariables.getAllVariables()
+
+    let toUpdate = allVariables[0]
+    toUpdate.qName =  'Test Update Variable'
+
+    let updateVariable = await qDoc.mixin.qVariables.updateVariable(toUpdate)
+
+    let updatedVariable = await qDoc.getVariableById(toUpdate.qInfo.qId)
+    let varProperties = await updatedVariable.getProperties()
+    expect(varProperties.qName).toBe('Test Update Variable')
+  });
+
 
 });

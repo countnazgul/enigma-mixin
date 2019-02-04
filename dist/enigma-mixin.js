@@ -1,5 +1,5 @@
 /**
- * enigma-mixin v0.0.1
+ * enigma-mixin v0.0.2
  * Copyright (c) 2019 Stefan Stoichev
  * This library is licensed under MIT - See the LICENSE file for full details
  */
@@ -31,29 +31,26 @@
     };
 
     async function getAllVariables({
-      qDoc,
       showSession = false,
       showConfig = false,
       showReserved = false
-    }) {
+    } = {}) {
       let objProp = objectDefinitions.variableList;
-      objProp.qShowSession = showSession, objProp.qShowConfig = showConfig, objProp.qShowReserved = showReserved;
-      let sessionObj = await qDoc.createSessionObject(objProp);
+      objProp.qShowSession = showSession;
+      objProp.qShowConfig = showConfig;
+      objProp.qShowReserved = showReserved;
+      let sessionObj = await _this.api.createSessionObject(objProp);
       let sessionObjLayout = await sessionObj.getLayout();
-      return sessionObjLayout;
+      return sessionObjLayout.qVariableList.qItems;
     }
 
-    async function updateVariable({
-      qDoc,
-      variable
-    }) {
-      let variableContent = await qDoc.getVariableById(variable.qInfo.qId);
+    async function updateVariable(variable) {
+      let variableContent = await _this.api.getVariableById(variable.qInfo.qId);
       let newContent = await variableContent.setProperties(variable);
       return newContent;
     }
 
     async function createVariable({
-      qDoc,
       variableName,
       variableComment = '',
       variableDefinition
@@ -66,7 +63,7 @@
         "qComment": variableComment,
         "qDefinition": variableDefinition
       };
-      let result = await doc.createVariableEx(varProps);
+      let result = await _this.api.createVariableEx(varProps);
       return result;
     }
 
@@ -81,18 +78,28 @@
       let selections = await sessionObj.getLayout();
       return selections;
     }
+    /**
+     * Get current selections
+     */
+
 
     async function getCurrentSelections() {
       let selections = await getCurrSelectionFields();
       let fieldsSelected = selections.qSelectionObject.qSelections.map(function (s) {
         return s.qField;
-      }); // let fields = await getSelectionFields(doc, fieldsSelected)
-
+      });
       return {
         selections: selections.qSelectionObject.qSelections,
         fields: fieldsSelected
       };
     }
+    /**
+     * Select value(s) in a field
+     * @param {string} fieldName - Name of the field
+     * @param {array} values - String array with the values to be selected
+     * @param {boolean} [toggle=false] toggle - How to apply the selection
+     */
+
 
     async function selectInField({
       fieldName,
@@ -124,27 +131,18 @@
       getCurrentSelections
     };
 
-    async function getTablesAndKeys(qDoc) {
-      let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false);
-      let f = [];
-
-      for (let table of tables.qtr) {
-        for (let field of table.qFields) {
-          f.push({
-            table: table.qName,
-            field: field.qName
-          });
-        }
-      }
-
-      return {
-        tables: tables,
-        fields: f
-      };
-    }
-
-    async function getTablesAndFields(qDoc) {
-      let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false);
+    // async function getTablesAndKeys() {
+    //     let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
+    //     let f = [];
+    //     for (let table of tables.qtr) {
+    //         for (let field of table.qFields) {
+    //             f.push({ table: table.qName, field: field.qName })
+    //         }
+    //     }
+    //     return { tables: tables, fields: f }
+    // }
+    async function getTablesAndFields() {
+      let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false);
       let f = [];
 
       for (let table of tables.qtr) {
@@ -159,8 +157,8 @@
       return f;
     }
 
-    async function getTables(qDoc) {
-      let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false);
+    async function getTables() {
+      let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false);
       let t = [];
 
       for (let table of tables.qtr) {
@@ -170,8 +168,8 @@
       return t;
     }
 
-    async function getFields(qDoc) {
-      let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false);
+    async function getFields() {
+      let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false);
       let f = [];
 
       for (let table of tables.qtr) {
@@ -184,7 +182,7 @@
     }
 
     var tables = {
-      getTablesAndKeys,
+      // getTablesAndKeys,
       getTablesAndFields,
       getTables,
       getFields

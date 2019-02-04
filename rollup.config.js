@@ -44,7 +44,7 @@ const createConfig = (overrides) => {
 const build = createConfig({
     input: 'src/main.js',
     output: {
-        file: 'build/enigma-mixin.js',
+        file: 'dist/enigma-mixin.js',
         name: 'enigma-mixin',
     },
 });

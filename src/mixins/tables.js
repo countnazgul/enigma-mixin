@@ -1,20 +1,20 @@
-async function getTablesAndKeys(qDoc) {
+// async function getTablesAndKeys() {
 
-    let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false)
+//     let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
 
-    let f = [];
+//     let f = [];
 
-    for (let table of tables.qtr) {
-        for (let field of table.qFields) {
-            f.push({ table: table.qName, field: field.qName })
-        }
-    }
+//     for (let table of tables.qtr) {
+//         for (let field of table.qFields) {
+//             f.push({ table: table.qName, field: field.qName })
+//         }
+//     }
 
-    return { tables: tables, fields: f }
-}
+//     return { tables: tables, fields: f }
+// }
 
-async function getTablesAndFields(qDoc) {
-    let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false)
+async function getTablesAndFields() {
+    let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
 
     let f = [];
 
@@ -27,8 +27,8 @@ async function getTablesAndFields(qDoc) {
     return f
 }
 
-async function getTables(qDoc) {
-    let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false)
+async function getTables() {
+    let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
 
     let t = [];
 
@@ -39,9 +39,9 @@ async function getTables(qDoc) {
     return t
 }
 
-async function getFields(qDoc) {
+async function getFields() {
 
-    let tables = await qDoc.getTablesAndKeys({}, {}, 0, true, false)
+    let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
 
     let f = [];
 
@@ -55,7 +55,7 @@ async function getFields(qDoc) {
 }
 
 module.exports = {
-    getTablesAndKeys,
+    // getTablesAndKeys,
     getTablesAndFields,
     getTables,
     getFields

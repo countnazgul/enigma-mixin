@@ -1,6 +1,6 @@
 {
   "name": "enigma-mixin",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "",
   "homepage": "https://github.com/owner/project#readme",
   "author": "Stefan Stoichev / sstoichev.eu /stefan.stoichev@gmail.com / @countnazgul",
@@ -9,7 +9,7 @@
     "test": "jest",
     "build-test": "rollup --config",
     "build": "rollup -c && cross-env NODE_ENV=production rollup -c",
-    "jsdoc": "jsdoc ./src -c ./jsdoc-config.json -r -d ./jsdoc"
+    "jsdoc": "jsdoc ./src -c ./jsdoc-config.json -r -d ./docs"
   },
   "dependencies": {
     "enigma.js": "^2.4.0",
@@ -17,14 +17,12 @@
   },
   "main": "index.js",
   "files": [
-    "/enigma.js",
-    "/enigma.js.map",
-    "/enigma.min.js",
-    "/enigma.min.js.map",
-    "/sense-utilities.js",
-    "/sense-utilities.js.map",
-    "/sense-utilities.min.js",
-    "/sense-utilities.min.js.map"
+    "dist/*",
+    "src/*",
+    "tests/*",
+    "*.json",
+    "*.js",
+    "*.md"
   ],
   "devDependencies": {
     "@babel/preset-env": "^7.3.1",

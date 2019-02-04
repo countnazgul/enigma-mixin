@@ -1,0 +1,6 @@
+Tests:
+    ✔ Cover Variables @done(19-02-03 18:20)
+    ✔ Cover Tables @done(19-02-03 19:35)
+
+General:
+    ☐ Automated testing? (https://hub.docker.com/v2/repositories/qlikcore/engine/tags) - possible to run all the tests against Core contaner? 
