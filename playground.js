@@ -1,7 +1,8 @@
 const enigma = require('enigma.js');
 const WebSocket = require('ws');
 const schema = require('enigma.js/schemas/12.20.0.json');
-const docMixin = require('./src/main.js');
+const docMixin = require('./dist/enigma-mixin.js');
+// const docMixin = require('./src/main.js');
 const OS = require('os')
 
 const OSUser = OS.userInfo().username;
@@ -14,9 +15,12 @@ const qvfPath = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Ma
 
     let qDoc = await qlikConnect.global.openDoc(qvfPath)
 
+    let t = 0
+    // let a = await qDoc.mixin.qSelections.getCurrSelectionFields()
+    let a = await qDoc.getCurrSelectionFields()
     // let a = await qDoc.mixin.qTablesAndFields.getTables()
     // let a = await qDoc.mixin.qTablesAndFields.getFields()
-    let a = await qDoc.mixin.qTablesAndFields.getTablesAndFields()
+    // let a = await qDoc.mixin.qTablesAndFields.getTablesAndFields()
 
     
 

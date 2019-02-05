@@ -5,15 +5,12 @@ const qTablesAndFields = require('./mixins/tables.js')
 const docMixin = {
     types: ['Doc'],
     init(args) {
-        _this = args
-        ConfiguredPromise = args.config.Promise;
+        const api = args;
     },
     extend: {
-        mixin: {
-            qVariables,
-            qSelections,
-            qTablesAndFields
-        }
+        ...qSelections,
+        ...qTablesAndFields,
+        ...qVariables
     },
 };
 

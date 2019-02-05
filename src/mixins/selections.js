@@ -1,8 +1,7 @@
 const objectDefinitions = require('./object-definitions.js')
 
-
-async function getCurrSelectionFields() {
-    let sessionObj = await _this.api.createSessionObject(objectDefinitions.sessionList)
+async function mGetCurrSelectionFields() {
+    let sessionObj = await this.createSessionObject(objectDefinitions.sessionList)
     let selections = await sessionObj.getLayout()
     return selections
 }
@@ -10,7 +9,7 @@ async function getCurrSelectionFields() {
 /**
  * Get current selections
  */
-async function getCurrentSelections() {
+async function mGetCurrentSelections() {
 
     let selections = await getCurrSelectionFields()
 
@@ -27,8 +26,8 @@ async function getCurrentSelections() {
  * @param {array} values - String array with the values to be selected
  * @param {boolean} [toggle=false] toggle - How to apply the selection
  */
-async function selectInField({ fieldName, values, toggle = false }) {
-    let field = await _this.api.getField(fieldName)
+async function mSelectInField({ fieldName, values, toggle = false }) {
+    let field = await this.getField(fieldName)
 
     let valuesToSelect = values.map(function (v) {
         return {
@@ -46,7 +45,7 @@ async function selectInField({ fieldName, values, toggle = false }) {
 }
 
 module.exports = {
-    getCurrSelectionFields,
-    selectInField,
-    getCurrentSelections
+    mGetCurrSelectionFields,
+    mSelectInField,
+    mGetCurrentSelections
 }

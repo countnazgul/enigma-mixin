@@ -13,8 +13,8 @@
 //     return { tables: tables, fields: f }
 // }
 
-async function getTablesAndFields() {
-    let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
+async function mGetTablesAndFields() {
+    let tables = await this.getTablesAndKeys({}, {}, 0, true, false)
 
     let f = [];
 
@@ -27,8 +27,8 @@ async function getTablesAndFields() {
     return f
 }
 
-async function getTables() {
-    let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
+async function mGetTables() {
+    let tables = await this.getTablesAndKeys({}, {}, 0, true, false)
 
     let t = [];
 
@@ -39,9 +39,9 @@ async function getTables() {
     return t
 }
 
-async function getFields() {
+async function mGetFields() {
 
-    let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
+    let tables = await this.getTablesAndKeys({}, {}, 0, true, false)
 
     let f = [];
 
@@ -56,7 +56,7 @@ async function getFields() {
 
 module.exports = {
     // getTablesAndKeys,
-    getTablesAndFields,
-    getTables,
-    getFields
+    mGetTablesAndFields,
+    mGetTables,
+    mGetFields
 }

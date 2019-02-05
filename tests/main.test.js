@@ -67,18 +67,18 @@ describe('initialization', async function () {
   });
 });
 
-describe('Selectioins', async function () {
+describe('Selections', async function () {
   it('Selecting value in field to be ok', async function () {
     let qDoc = await qGlobal.openDoc(testDoc)
-    let a1 = await qDoc.mixin.qSelections.selectInField({ fieldName: 'Case Owner Group', values: ['Operatioins'] })
+    let a1 = await qDoc.mSelectInField({ fieldName: 'Case Owner Group', values: ['Operatioins'] })
 
     expect(a1).toBeTruthy
   });
 
   it('Check selected values are correct', async function () {
     let qDoc = await qGlobal.openDoc(testDoc)
-    let a1 = await qDoc.mixin.qSelections.selectInField({ fieldName: 'Case Owner Group', values: ['Operations'] })
-    let a2 = await qDoc.mixin.qSelections.getCurrSelectionFields()
+    let a1 = await qDoc.mSelectInField({ fieldName: 'Case Owner Group', values: ['Operations'] })
+    let a2 = await qDoc.mGetCurrSelectionFields()
 
     expect(a2.qSelectionObject.qSelections[0].qSelected).toBe('Operations')
   });
@@ -88,7 +88,7 @@ describe('Selectioins', async function () {
 describe('Tables and fields', async function () {
   it('Document to contain more than 1 table', async function () {
     let qDoc = await qGlobal.openDoc(testDoc)
-    let tables = await qDoc.mixin.qTablesAndFields.getTables()
+    let tables = await qDoc.mGetTables()
 
     let tablesIndex = tables.indexOf("Helpdesk Cases")
 
@@ -98,7 +98,7 @@ describe('Tables and fields', async function () {
 
   it('Document to contain more than 1 field', async function () {
     let qDoc = await qGlobal.openDoc(testDoc)
-    let fields = await qDoc.mixin.qTablesAndFields.getFields()
+    let fields = await qDoc.mGetFields()
 
     let fieldIndex = fields.indexOf("Cases Open/Closed")
 
@@ -108,7 +108,7 @@ describe('Tables and fields', async function () {
 
   it('Returns array of fields <-> tables', async function () {
     let qDoc = await qGlobal.openDoc(testDoc)
-    let tablesAndFields = await qDoc.mixin.qTablesAndFields.getTablesAndFields()
+    let tablesAndFields = await qDoc.mGetTablesAndFields()
 
     let field = tablesAndFields.filter(function (f) {
       return (f.field == 'Case Count' && f.table == "Helpdesk Cases")
@@ -123,7 +123,7 @@ describe('Tables and fields', async function () {
 describe('Variables', async function () {
   it('Document to contain more than 1 variable', async function () {
     let qDoc = await qGlobal.openDoc(testDoc)
-    let allVariables = await qDoc.mixin.qVariables.getAllVariables()
+    let allVariables = await qDoc.mGetAllVariables()
 
     expect(allVariables.length).toBeGreaterThan(1)
   });
@@ -136,8 +136,8 @@ describe('Variables', async function () {
       variableDefinition: 'sum(100)'
     }
 
-    let createVariable = await qDoc.mixin.qVariables.createVariable(newVariable)
-    let allVariables = await qDoc.mixin.qVariables.getAllVariables()
+    let createVariable = await qDoc.mCreateVariable(newVariable)
+    let allVariables = await qDoc.mGetAllVariables()
 
     let createdVariable = allVariables.filter(function (v) {
       return v.qName == newVariable.variableName
@@ -148,12 +148,12 @@ describe('Variables', async function () {
 
   it('Update variable name', async function () {
     let qDoc = await qGlobal.openDoc(testDoc)
-    let allVariables = await qDoc.mixin.qVariables.getAllVariables()
+    let allVariables = await qDoc.mGetAllVariables()
 
     let toUpdate = allVariables[0]
     toUpdate.qName =  'Test Update Variable'
 
-    let updateVariable = await qDoc.mixin.qVariables.updateVariable(toUpdate)
+    let updateVariable = await qDoc.mUpdateVariable(toUpdate)
 
     let updatedVariable = await qDoc.getVariableById(toUpdate.qInfo.qId)
     let varProperties = await updatedVariable.getProperties()

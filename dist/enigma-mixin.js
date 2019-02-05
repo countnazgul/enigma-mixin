@@ -1,5 +1,5 @@
 /**
- * enigma-mixin v0.0.2
+ * enigma-mixin v0.0.3
  * Copyright (c) 2019 Stefan Stoichev
  * This library is licensed under MIT - See the LICENSE file for full details
  */
@@ -30,7 +30,7 @@
       variableList
     };
 
-    async function getAllVariables({
+    async function mGetAllVariables({
       showSession = false,
       showConfig = false,
       showReserved = false
@@ -39,22 +39,24 @@
       objProp.qShowSession = showSession;
       objProp.qShowConfig = showConfig;
       objProp.qShowReserved = showReserved;
-      let sessionObj = await _this.api.createSessionObject(objProp);
+      let sessionObj = await this.createSessionObject(objProp);
       let sessionObjLayout = await sessionObj.getLayout();
       return sessionObjLayout.qVariableList.qItems;
     }
 
-    async function updateVariable(variable) {
-      let variableContent = await _this.api.getVariableById(variable.qInfo.qId);
+    async function mUpdateVariable(variable) {
+      let variableContent = await this.getVariableById(variable.qInfo.qId);
       let newContent = await variableContent.setProperties(variable);
       return newContent;
     }
 
-    async function createVariable({
+    async function mCreateVariable({
       variableName,
       variableComment = '',
       variableDefinition
     }) {
+      let _this = this;
+
       let varProps = {
         "qInfo": {
           "qType": "variable"
@@ -63,18 +65,18 @@
         "qComment": variableComment,
         "qDefinition": variableDefinition
       };
-      let result = await _this.api.createVariableEx(varProps);
+      let result = await _this.createVariableEx(varProps);
       return result;
     }
 
     var variables = {
-      getAllVariables,
-      updateVariable,
-      createVariable
+      mGetAllVariables,
+      mUpdateVariable,
+      mCreateVariable
     };
 
-    async function getCurrSelectionFields() {
-      let sessionObj = await _this.api.createSessionObject(objectDefinitions.sessionList);
+    async function mGetCurrSelectionFields() {
+      let sessionObj = await this.createSessionObject(objectDefinitions.sessionList);
       let selections = await sessionObj.getLayout();
       return selections;
     }
@@ -83,7 +85,7 @@
      */
 
 
-    async function getCurrentSelections() {
+    async function mGetCurrentSelections() {
       let selections = await getCurrSelectionFields();
       let fieldsSelected = selections.qSelectionObject.qSelections.map(function (s) {
         return s.qField;
@@ -101,12 +103,12 @@
      */
 
 
-    async function selectInField({
+    async function mSelectInField({
       fieldName,
       values,
       toggle = false
     }) {
-      let field = await _this.api.getField(fieldName);
+      let field = await this.getField(fieldName);
       let valuesToSelect = values.map(function (v) {
         return {
           qText: v
@@ -126,9 +128,9 @@
     }
 
     var selections = {
-      getCurrSelectionFields,
-      selectInField,
-      getCurrentSelections
+      mGetCurrSelectionFields,
+      mSelectInField,
+      mGetCurrentSelections
     };
 
     // async function getTablesAndKeys() {
@@ -141,8 +143,8 @@
     //     }
     //     return { tables: tables, fields: f }
     // }
-    async function getTablesAndFields() {
-      let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false);
+    async function mGetTablesAndFields() {
+      let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
       let f = [];
 
       for (let table of tables.qtr) {
@@ -157,8 +159,8 @@
       return f;
     }
 
-    async function getTables() {
-      let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false);
+    async function mGetTables() {
+      let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
       let t = [];
 
       for (let table of tables.qtr) {
@@ -168,8 +170,8 @@
       return t;
     }
 
-    async function getFields() {
-      let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false);
+    async function mGetFields() {
+      let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
       let f = [];
 
       for (let table of tables.qtr) {
@@ -183,25 +185,20 @@
 
     var tables = {
       // getTablesAndKeys,
-      getTablesAndFields,
-      getTables,
-      getFields
+      mGetTablesAndFields,
+      mGetTables,
+      mGetFields
     };
 
     const docMixin = {
       types: ['Doc'],
 
       init(args) {
-        _this = args;
-        ConfiguredPromise = args.config.Promise;
       },
 
-      extend: {
-        mixin: {
-          qVariables: variables,
-          qSelections: selections,
-          qTablesAndFields: tables
-        }
+      extend: { ...selections,
+        ...tables,
+        ...variables
       }
     };
     var main = docMixin;
