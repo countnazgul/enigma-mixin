@@ -6,10 +6,10 @@ volumes:
 services:
   qix-engine:
     container_name: qix-engine
-    image: "qlikcore/engine:${QIX_ENGINE_VER:latest}"
+    image: "qlikcore/engine:12.311.0"
     command: [
        "-S", "DocumentDirectory=/docs",
-       "-S", "AcceptEULA=${QIX_ACCEPT_EULA:-no}"
+       "-S", "AcceptEULA=yes"
      ]
     volumes:
       - sense-docs:/docs
