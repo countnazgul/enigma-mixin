@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.15.0
+    working_directory: ~/enigma-mixin
+
+    steps:
+      - checkout:
+        path: ~/enigma-mixin
+      - run:
+          name: Install dependencies
+          command: npm install --quiet    
+      - run:
+          name: Spin up environment
+          working_directory: ~/enigma-mixin/tests
+          command: QIX_ENGINE_VER=12.171.0 QIX_ACCEPT_EULA=yes docker-compose up --build -d
+      - run:
+          name: Run Test
+          command: npm run test

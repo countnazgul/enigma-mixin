@@ -6,7 +6,8 @@ const docMixin = require('../dist/enigma-mixin.min.js');
 const OS = require('os')
 
 const OSUser = OS.userInfo().username;
-const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Management.qvf`
+// const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Management.qvf`
+const testDoc = `Helpdesk Management.qvf`
 
 let qSession;
 let qGlobal;
@@ -44,7 +45,7 @@ async function connect() {
   let session = enigma.create({
     schema,
     mixins: [docMixin],
-    url: 'ws://localhost:4848/app/engineData',
+    url: 'ws://localhost:9076/app/engineData',
     createSocket: url => new WebSocket(url),
   });
 

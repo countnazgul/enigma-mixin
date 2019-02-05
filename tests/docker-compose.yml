@@ -1,0 +1,25 @@
+version: "3.3"
+
+volumes:
+  sense-docs:
+
+services:
+  qix-engine:
+    container_name: qix-engine
+    image: "qlikcore/engine:${QIX_ENGINE_VER:latest}"
+    command: [
+       "-S", "DocumentDirectory=/docs",
+       "-S", "AcceptEULA=${QIX_ACCEPT_EULA:-no}"
+     ]
+    volumes:
+      - sense-docs:/docs
+    ports:
+      - "9076:9076"
+    expose:
+      - 9076     
+
+  sense-docs:
+    image: stefanwalther/sense-docs:latest@sha256:50f9a7baffa3eaaac1346ba64d762c64223f6dfcc6ff8c6eaed9e7c874fc5e5a
+    volumes:
+      - sense-docs:/opt/sense-docs/docs
+    tty: true      
