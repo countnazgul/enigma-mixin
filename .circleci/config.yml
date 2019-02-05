@@ -11,6 +11,7 @@ jobs:
       - run:
           name: Install dependencies
           command: npm install --quiet    
+      - setup_remote_docker
       - run:
           name: Spin up environment
           working_directory: ~/enigma-mixin/tests
