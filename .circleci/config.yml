@@ -7,7 +7,7 @@ jobs:
 
     steps:
       - checkout:
-        path: ~/enigma-mixin
+          path: ~/enigma-mixin
       - run:
           name: Install dependencies
           command: npm install --quiet    
