@@ -45,7 +45,7 @@ async function connect() {
   let session = enigma.create({
     schema,
     mixins: [docMixin],
-    url: 'ws://qix-engine:9076/app/engineData',
+    url: 'ws://localhost:9076/app/engineData',
     createSocket: url => new WebSocket(url),
   });
 
