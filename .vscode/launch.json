@@ -7,8 +7,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}\\playground.js"
+            "name": "Launch Playground",
+            "program": "${workspaceFolder}\\playground.js",
+            "env": {
+                "QS_HOST": "localhost",
+                "QS_PORT": "4848",
+                "QS_DOC": "Helpdesk Management.qvf",
+                "release": "dev"
+            },
         },
         {
             "type": "node",
@@ -24,6 +30,6 @@
             "windows": {
                 "program": "${workspaceFolder}/node_modules/jest/bin/jest",
             }
-        }      
+        }
     ]
 }

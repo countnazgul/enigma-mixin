@@ -1,5 +1,5 @@
 /**
- * enigma-mixin v0.0.3
+ * enigma-mixin v0.0.4
  * Copyright (c) 2019 Stefan Stoichev
  * This library is licensed under MIT - See the LICENSE file for full details
  */
@@ -30,7 +30,7 @@
       variableList
     };
 
-    async function mGetAllVariables({
+    async function mGetVariablesAll({
       showSession = false,
       showConfig = false,
       showReserved = false
@@ -39,61 +39,102 @@
       objProp.qShowSession = showSession;
       objProp.qShowConfig = showConfig;
       objProp.qShowReserved = showReserved;
-      let sessionObj = await this.createSessionObject(objProp);
-      let sessionObjLayout = await sessionObj.getLayout();
-      return sessionObjLayout.qVariableList.qItems;
+
+      try {
+        let sessionObj = await this.createSessionObject(objProp);
+        let sessionObjLayout = await sessionObj.getLayout();
+        return sessionObjLayout.qVariableList.qItems;
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
     }
 
     async function mUpdateVariable(variable) {
-      let variableContent = await this.getVariableById(variable.qInfo.qId);
-      let newContent = await variableContent.setProperties(variable);
-      return newContent;
+      try {
+        let variableContent = await this.getVariableById(variable.qInfo.qId);
+        let newContent = await variableContent.setProperties(variable);
+        return newContent;
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
     }
 
     async function mCreateVariable({
-      variableName,
-      variableComment = '',
-      variableDefinition
+      name,
+      comment = '',
+      definition
     }) {
-      let _this = this;
-
       let varProps = {
         "qInfo": {
           "qType": "variable"
         },
-        "qName": variableName,
-        "qComment": variableComment,
-        "qDefinition": variableDefinition
+        "qName": name,
+        "qComment": comment,
+        "qDefinition": definition
       };
-      let result = await _this.createVariableEx(varProps);
-      return result;
+
+      try {
+        let result = await this.createVariableEx(varProps);
+        return result;
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
     }
 
-    var variables = {
-      mGetAllVariables,
+    var qVariables = {
+      mGetVariablesAll,
       mUpdateVariable,
       mCreateVariable
     };
 
-    async function mGetCurrSelectionFields() {
-      let sessionObj = await this.createSessionObject(objectDefinitions.sessionList);
-      let selections = await sessionObj.getLayout();
-      return selections;
+    async function iGetSelectionsNative(qDoc) {
+      try {
+        let sessionObj = await qDoc.createSessionObject(objectDefinitions.sessionList);
+        let selections = await sessionObj.getLayout();
+        return selections;
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
+    }
+
+    async function mGetSelectionsCurrNative() {
+      try {
+        let selections = await iGetSelectionsNative(this);
+        return selections;
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
     }
     /**
      * Get current selections
      */
 
 
-    async function mGetCurrentSelections() {
-      let selections = await getCurrSelectionFields();
-      let fieldsSelected = selections.qSelectionObject.qSelections.map(function (s) {
-        return s.qField;
-      });
-      return {
-        selections: selections.qSelectionObject.qSelections,
-        fields: fieldsSelected
-      };
+    async function mGetSelectionsCurr() {
+      try {
+        let selections = await iGetSelectionsNative(this);
+        let fieldsSelected = selections.qSelectionObject.qSelections.map(function (s) {
+          return s.qField;
+        });
+        return {
+          selections: selections.qSelectionObject.qSelections,
+          fields: fieldsSelected
+        };
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
     }
     /**
      * Select value(s) in a field
@@ -108,83 +149,105 @@
       values,
       toggle = false
     }) {
-      let field = await this.getField(fieldName);
-      let valuesToSelect = values.map(function (v) {
-        return {
-          qText: v
-        };
-      });
-
       try {
-        let selection = await field.selectValues({
-          qFieldValues: valuesToSelect,
-          qToggleMode: toggle
+        let field = await this.getField(fieldName);
+        let valuesToSelect = values.map(function (v) {
+          return {
+            qText: v
+          };
         });
-        return selection;
+
+        try {
+          let selection = await field.selectValues({
+            qFieldValues: valuesToSelect,
+            qToggleMode: toggle
+          });
+          return selection;
+        } catch (e) {
+          return {
+            error: e.message
+          };
+        }
       } catch (e) {
-        console.log(e.message);
-        return false;
+        return {
+          error: e.message
+        };
       }
     }
 
-    var selections = {
-      mGetCurrSelectionFields,
-      mSelectInField,
-      mGetCurrentSelections
+    var qSelections = {
+      mGetSelectionsCurr,
+      mGetSelectionsCurrNative,
+      mSelectInField
     };
 
-    // async function getTablesAndKeys() {
-    //     let tables = await _this.api.getTablesAndKeys({}, {}, 0, true, false)
-    //     let f = [];
-    //     for (let table of tables.qtr) {
-    //         for (let field of table.qFields) {
-    //             f.push({ table: table.qName, field: field.qName })
-    //         }
-    //     }
-    //     return { tables: tables, fields: f }
-    // }
     async function mGetTablesAndFields() {
-      let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
-      let f = [];
+      try {
+        let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
+        let f = [];
 
-      for (let table of tables.qtr) {
-        for (let field of table.qFields) {
-          f.push({
-            table: table.qName,
-            field: field.qName
-          });
+        if (tables.qtr.length == 0) {
+          return f;
+        } else {
+          for (let table of tables.qtr) {
+            for (let field of table.qFields) {
+              f.push({
+                table: table.qName,
+                field: field.qName
+              });
+            }
+          }
+
+          return f;
         }
+      } catch (e) {
+        return {
+          error: e.message
+        };
       }
-
-      return f;
     }
 
     async function mGetTables() {
-      let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
-      let t = [];
+      try {
+        let qTables = await this.getTablesAndKeys({}, {}, 0, true, false);
+        let tables = [];
 
-      for (let table of tables.qtr) {
-        t.push(table.qName);
+        if (qTables.length == 0) {
+          return tables;
+        } else {
+          for (let table of qTables.qtr) {
+            tables.push(table.qName);
+          }
+
+          return tables;
+        }
+      } catch (e) {
+        return {
+          error: e.message
+        };
       }
-
-      return t;
     }
 
     async function mGetFields() {
-      let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
-      let f = [];
+      try {
+        let qTables = await this.getTablesAndKeys({}, {}, 0, true, false);
+        let fields = [];
 
-      for (let table of tables.qtr) {
-        for (let field of table.qFields) {
-          f.push(field.qName);
+        for (let table of qTables.qtr) {
+          for (let field of table.qFields) {
+            fields.push(field.qName);
+          }
         }
-      }
 
-      return f;
+        return fields;
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
     }
 
-    var tables = {
-      // getTablesAndKeys,
+    var qTablesAndFields = {
       mGetTablesAndFields,
       mGetTables,
       mGetFields
@@ -193,12 +256,11 @@
     const docMixin = {
       types: ['Doc'],
 
-      init(args) {
-      },
+      init(args) {},
 
-      extend: { ...selections,
-        ...tables,
-        ...variables
+      extend: { ...qSelections,
+        ...qTablesAndFields,
+        ...qVariables
       }
     };
     var main = docMixin;
