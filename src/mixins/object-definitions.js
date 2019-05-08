@@ -15,7 +15,33 @@ const variableList = {
     }
 }
 
+const listBox = {
+    "qInfo": {
+        "qId": "",
+        "qType": "Combo"
+    },
+    "field": {
+        "qListObjectDef": {
+            "qStateName": "$",
+            "qDef": {
+                "qFieldDefs": [],
+                "qSortCriterias": [{
+                    "qSortByState": 1,
+                    "qExpression": {}
+                }]
+            },
+            "qInitialDataFetch": [{
+                "qTop": 0,
+                "qLeft": 0,
+                "qHeight": 100,
+                "qWidth": 1
+            }]
+        }
+    }
+}
+
 module.exports = {
     sessionList,
-    variableList
+    variableList,
+    listBox
 }
