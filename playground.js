@@ -41,10 +41,12 @@ if (process.env.QS_PORT == "4848") {
   let t = 0
   // let a = await qDoc.mixin.qSelections.getCurrSelectionFields()
   // let a = await qDoc.mGetSelectionsCurr()
-  let a = await qDoc.mGetSelectionsCurrNative()
+  // let a = await qDoc.mGetSelectionsCurrNative() 
   // let a = await qDoc.mixin.qTablesAndFields.getTables()
   // let a = await qDoc.mixin.qTablesAndFields.getFields()
   // let a = await qDoc.mixin.qTablesAndFields.getTablesAndFields()
+
+  let a = await qDoc.mGetListbox('Case Aging')
 
 
 

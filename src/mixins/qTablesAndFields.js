@@ -1,3 +1,5 @@
+const objectDefinitions = require('./object-definitions.js')
+
 async function mGetTablesAndFields() {
 
     try {
@@ -60,8 +62,23 @@ async function mGetFields() {
     }
 }
 
+async function mGetListbox(fieldName) {
+
+    try {
+        let lbDef = objectDefinitions.listBox
+        lbDef.field.qListObjectDef.qDef.qFieldDefs.push(fieldName)
+        let sessionObj = await this.createSessionObject(lbDef)
+        let fieldValues = await sessionObj.getLayout()
+        return fieldValues.field.qListObject
+    } catch (e) {
+        return { error: e.message }
+    }
+
+}
+
 module.exports = {
     mGetTablesAndFields,
     mGetTables,
-    mGetFields
+    mGetFields,
+    mGetListbox
 } 
