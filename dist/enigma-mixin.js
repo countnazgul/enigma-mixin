@@ -1,5 +1,5 @@
 /**
- * enigma-mixin v0.0.4
+ * enigma-mixin v0.0.5
  * Copyright (c) 2019 Stefan Stoichev
  * This library is licensed under MIT - See the LICENSE file for full details
  */
@@ -25,9 +25,34 @@
         "qType": "variable"
       }
     };
+    const listBox = {
+      "qInfo": {
+        "qId": "",
+        "qType": "Combo"
+      },
+      "field": {
+        "qListObjectDef": {
+          "qStateName": "$",
+          "qDef": {
+            "qFieldDefs": [],
+            "qSortCriterias": [{
+              "qSortByState": 1,
+              "qExpression": {}
+            }]
+          },
+          "qInitialDataFetch": [{
+            "qTop": 0,
+            "qLeft": 0,
+            "qHeight": 100,
+            "qWidth": 1
+          }]
+        }
+      }
+    };
     var objectDefinitions = {
       sessionList,
-      variableList
+      variableList,
+      listBox
     };
 
     async function mGetVariablesAll({
@@ -247,10 +272,25 @@
       }
     }
 
+    async function mGetListbox(fieldName) {
+      try {
+        let lbDef = objectDefinitions.listBox;
+        lbDef.field.qListObjectDef.qDef.qFieldDefs.push(fieldName);
+        let sessionObj = await this.createSessionObject(lbDef);
+        let fieldValues = await sessionObj.getLayout();
+        return fieldValues.field.qListObject;
+      } catch (e) {
+        return {
+          error: e.message
+        };
+      }
+    }
+
     var qTablesAndFields = {
       mGetTablesAndFields,
       mGetTables,
-      mGetFields
+      mGetFields,
+      mGetListbox
     };
 
     const docMixin = {
