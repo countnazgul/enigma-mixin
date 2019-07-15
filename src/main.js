@@ -1,6 +1,7 @@
 const qVariables = require('./mixins/qVariables.js')
 const qSelections = require('./mixins/qSelections.js')
 const qTablesAndFields = require('./mixins/qTablesAndFields.js')
+const extensionObjects = require('./mixins/extension-objects.js')
 
 const docMixin = {
     types: ['Doc'],
@@ -10,7 +11,8 @@ const docMixin = {
     extend: {
         ...qSelections,
         ...qTablesAndFields,
-        ...qVariables
+        ...qVariables,
+        ...extensionObjects
     },
 };
 

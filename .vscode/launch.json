@@ -12,7 +12,8 @@
             "env": {
                 "QS_HOST": "localhost",
                 "QS_PORT": "4848",
-                "QS_DOC": "Helpdesk Management.qvf",
+                "QS_DOC": "SkyLine TEST.qvf",
+                // "QS_DOC": "Executive Dashboard.qvf",
                 "release": "dev"
             },
         },
