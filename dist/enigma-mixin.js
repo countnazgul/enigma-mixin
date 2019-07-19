@@ -314,6 +314,8 @@
           if (isReallyExtension.isExtension) {
             realExtensionObjects.push({
               appName: qDoc.id,
+              objId: isReallyExtension.qObjProps.qInfo.qId,
+              objType: isReallyExtension.qObjProps.qInfo.qType,
               extName: isReallyExtension.qObjProps.extensionMeta.name,
               extVersion: isReallyExtension.qObjProps.version,
               extVisible: isReallyExtension.qObjProps.extensionMeta.visible,

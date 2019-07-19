@@ -139,19 +139,19 @@ describe('Variables', async function () {
   it('Create new variable', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let newVariable = {
-      variableName: 'Test Variable',
-      variableComment: 'Commenting Test Variable',
-      variableDefinition: 'sum(100)'
+      name: 'Test Variable',
+      comment: 'Commenting Test Variable',
+      definition: 'sum(100)'
     }
 
     let createVariable = await qDoc.mCreateVariable(newVariable)
     let allVariables = await qDoc.mGetVariablesAll()
 
     let createdVariable = allVariables.filter(function (v) {
-      return v.qName == newVariable.variableName
+      return v.qName == newVariable.name
     })[0]
 
-    expect(createdVariable.qName).toBe(newVariable.variableName)
+    expect(createdVariable.qName).toBe(newVariable.name)
   });
 
   it('Update variable name', async function () {
