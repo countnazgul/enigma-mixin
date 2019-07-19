@@ -6,8 +6,16 @@ const docMixin = require('../dist/enigma-mixin.min.js');
 const OS = require('os')
 
 const OSUser = OS.userInfo().username;
-// const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Management.qvf`
-const testDoc = `/docs/Helpdesk Management.qvf`
+
+// const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Executive Dashboard.qvf`
+let docConf = {
+  testDoc: `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Executive Dashboard.qvf`,
+  table: 'ProductGroupMaster',
+  field: 'Product Group Desc',
+  values: ['Baked Goods'],
+  otherField: 'Account'
+}
+// const testDoc = `/docs/Helpdesk Management.qvf`
 
 let qSession;
 let qGlobal;
@@ -17,7 +25,7 @@ beforeAll(async function () {
     let qlikConnect = await connect()
 
     try {
-      let qDoc = await qlikConnect.global.openDoc(testDoc)
+      let qDoc = await qlikConnect.global.openDoc(docConf.testDoc)
     } catch (e) {
       console.log(`Test qvf do not exists`)
       process.exit(1)
@@ -45,7 +53,7 @@ async function connect() {
   let session = enigma.create({
     schema,
     mixins: [docMixin],
-    url: 'ws://localhost:9076/app/engineData',
+    url: 'ws://localhost:4848/app/engineData',
     createSocket: url => new WebSocket(url),
   });
 
@@ -53,8 +61,6 @@ async function connect() {
 
   return ({ session, global })
 }
-
-
 
 describe('initialization', async function () {
   it('qlik session should have mixins', async function () {
@@ -70,49 +76,50 @@ describe('initialization', async function () {
 
 describe('Selections', async function () {
   it('Selecting value in field to be ok', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
-    let a1 = await qDoc.mSelectInField({ fieldName: 'Case Owner Group', values: ['Operatioins'] })
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+    let a1 = await qDoc.mSelectInField({ fieldName: docConf.field, values: docConf.values })
 
     expect(a1).toBeTruthy
   });
 
   it('Check selected values are correct', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
-    let a1 = await qDoc.mSelectInField({ fieldName: 'Case Owner Group', values: ['Operations'] })
-    let a2 = await qDoc.mGetCurrSelectionFields()
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+    let a1 = await qDoc.mSelectInField({ fieldName: docConf.field, values: docConf.values })
+    // let a2 = await qDoc.mGetCurrSelectionFields()
+    let a2 = await qDoc.mGetSelectionsCurrNative()
 
-    expect(a2.qSelectionObject.qSelections[0].qSelected).toBe('Operations')
+    expect(a2.qSelectionObject.qSelections[0].qSelected).toBe(docConf.values[0])
   });
 
 });
 
 describe('Tables and fields', async function () {
   it('Document to contain more than 1 table', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let tables = await qDoc.mGetTables()
 
-    let tablesIndex = tables.indexOf("Helpdesk Cases")
+    let tablesIndex = tables.indexOf(docConf.table)
 
     expect(tables.length).toBeGreaterThan(1)
     expect(tablesIndex).toBeGreaterThan(-1)
   });
 
   it('Document to contain more than 1 field', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let fields = await qDoc.mGetFields()
 
-    let fieldIndex = fields.indexOf("Cases Open/Closed")
+    let fieldIndex = fields.indexOf(docConf.otherField)
 
     expect(fields.length).toBeGreaterThan(1)
     expect(fieldIndex).toBeGreaterThan(-1)
   });
 
   it('Returns array of fields <-> tables', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let tablesAndFields = await qDoc.mGetTablesAndFields()
 
     let field = tablesAndFields.filter(function (f) {
-      return (f.field == 'Case Count' && f.table == "Helpdesk Cases")
+      return (f.field == docConf.field && f.table == docConf.table)
     })
 
     expect(tablesAndFields.length).toBeGreaterThan(1)
@@ -123,14 +130,14 @@ describe('Tables and fields', async function () {
 
 describe('Variables', async function () {
   it('Document to contain more than 1 variable', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
-    let allVariables = await qDoc.mGetAllVariables()
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+    let allVariables = await qDoc.mGetVariablesAll()
 
     expect(allVariables.length).toBeGreaterThan(1)
   });
 
   it('Create new variable', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let newVariable = {
       variableName: 'Test Variable',
       variableComment: 'Commenting Test Variable',
@@ -138,7 +145,7 @@ describe('Variables', async function () {
     }
 
     let createVariable = await qDoc.mCreateVariable(newVariable)
-    let allVariables = await qDoc.mGetAllVariables()
+    let allVariables = await qDoc.mGetVariablesAll()
 
     let createdVariable = allVariables.filter(function (v) {
       return v.qName == newVariable.variableName
@@ -148,11 +155,11 @@ describe('Variables', async function () {
   });
 
   it('Update variable name', async function () {
-    let qDoc = await qGlobal.openDoc(testDoc)
-    let allVariables = await qDoc.mGetAllVariables()
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+    let allVariables = await qDoc.mGetVariablesAll()
 
     let toUpdate = allVariables[0]
-    toUpdate.qName =  'Test Update Variable'
+    toUpdate.qName = 'Test Update Variable'
 
     let updateVariable = await qDoc.mUpdateVariable(toUpdate)
 
