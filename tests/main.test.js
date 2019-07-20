@@ -3,8 +3,8 @@ const WebSocket = require('ws');
 const schema = require('enigma.js/schemas/12.20.0.json');
 // const docMixin = require('../src/main.js');
 const docMixin = require('../dist/enigma-mixin.min.js');
-const OS = require('os')
 
+const OS = require('os')
 const OSUser = OS.userInfo().username;
 
 // const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Executive Dashboard.qvf`
@@ -15,7 +15,6 @@ let docConf = {
   values: ['Baked Goods'],
   otherField: 'Account'
 }
-// const testDoc = `/docs/Helpdesk Management.qvf`
 
 let qSession;
 let qGlobal;
@@ -82,7 +81,7 @@ describe('Selections', async function () {
     expect(a1).toBeTruthy
   });
 
-  it('Check selected values are correct', async function () {
+  it('Check if selected values are correct', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let a1 = await qDoc.mSelectInField({ fieldName: docConf.field, values: docConf.values })
     // let a2 = await qDoc.mGetCurrSelectionFields()
@@ -129,13 +128,6 @@ describe('Tables and fields', async function () {
 });
 
 describe('Variables', async function () {
-  it('Document to contain more than 1 variable', async function () {
-    let qDoc = await qGlobal.openDoc(docConf.testDoc)
-    let allVariables = await qDoc.mGetVariablesAll()
-
-    expect(allVariables.length).toBeGreaterThan(1)
-  });
-
   it('Create new variable', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let newVariable = {
@@ -154,6 +146,13 @@ describe('Variables', async function () {
     expect(createdVariable.qName).toBe(newVariable.name)
   });
 
+  it('Document to contain more than 1 variable', async function () {
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+    let allVariables = await qDoc.mGetVariablesAll()
+
+    expect(allVariables.length).toBeGreaterThan(0)
+  });
+
   it('Update variable name', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let allVariables = await qDoc.mGetVariablesAll()
@@ -168,5 +167,16 @@ describe('Variables', async function () {
     expect(varProperties.qName).toBe('Test Update Variable')
   });
 
+
+});
+
+describe('Extensions', async function () {
+  it('List all extensions in a document', async function () {
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+
+    let extensionObjects = await qDoc.mGetAllExtensionObjects()
+
+    expect(extensionObjects.length).toBeGreaterThan(0)
+  });
 
 });
