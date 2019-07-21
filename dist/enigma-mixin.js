@@ -1,5 +1,5 @@
 /**
- * enigma-mixin v0.0.6
+ * enigma-mixin v0.0.7
  * Copyright (c) 2019 Stefan Stoichev
  * This library is licensed under MIT - See the LICENSE file for full details
  */
@@ -70,9 +70,7 @@
         let sessionObjLayout = await sessionObj.getLayout();
         return sessionObjLayout.qVariableList.qItems;
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -82,9 +80,7 @@
         let newContent = await variableContent.setProperties(variable);
         return newContent;
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -106,9 +102,7 @@
         let result = await this.createVariableEx(varProps);
         return result;
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -124,9 +118,7 @@
         let selections = await sessionObj.getLayout();
         return selections;
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -135,9 +127,7 @@
         let selections = await iGetSelectionsNative(this);
         return selections;
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
     /**
@@ -156,9 +146,7 @@
           fields: fieldsSelected
         };
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
     /**
@@ -189,14 +177,10 @@
           });
           return selection;
         } catch (e) {
-          return {
-            error: e.message
-          };
+          throw new Error(e.message);
         }
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -226,9 +210,7 @@
           return f;
         }
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -247,9 +229,7 @@
           return tables;
         }
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -266,9 +246,7 @@
 
         return fields;
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -280,9 +258,7 @@
         let fieldValues = await sessionObj.getLayout();
         return fieldValues.field.qListObject;
       } catch (e) {
-        return {
-          error: e.message
-        };
+        throw new Error(e.message);
       }
     }
 
@@ -293,13 +269,13 @@
       mGetListbox
     };
 
+    const nonExtensionObjects = ["barchart", "bookmark", "combochart", "dimension", "embeddedsnapshot", "filterpane", "gauge", "kpi", "linechart", "listbox", "LoadModel", "map", "masterobject", "measure", "piechart", "pivot-table", "scatterplot", "sheet", "slide", "slideitem", "snapshot", "story", "StringExpression", "table", "treemap"];
+
     async function mGetAllExtensionObjects() {
       let allInfos = await this.getAllInfos();
       let extensionObjects = await filterOnlyExtensionObjects(this, allInfos);
       return extensionObjects;
     }
-
-    const nonExtensionObjects = ["barchart", "bookmark", "combochart", "dimension", "embeddedsnapshot", "filterpane", "gauge", "kpi", "linechart", "listbox", "LoadModel", "map", "masterobject", "measure", "piechart", "pivot-table", "scatterplot", "sheet", "slide", "slideitem", "snapshot", "story", "StringExpression", "table", "treemap"];
 
     async function filterOnlyExtensionObjects(qDoc, allObjects) {
       let possibleExtensionObjects = allObjects.filter(function (o) {
@@ -344,7 +320,7 @@
           isExtension = true;
         }
       } catch (e) {
-        console.log(`${e.message}`);
+        throw new Error(e.message);
       }
 
       return {

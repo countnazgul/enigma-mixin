@@ -1,6 +1,6 @@
 {
   "name": "enigma-mixin",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Set of Qlik Sense enigma.js mixin",
   "keywords": [
     "enigma.js",
@@ -9,10 +9,13 @@
     "qlik",
     "qlik-sense",
     "qlik-sense-desktop"
-  ],  
-  "homepage": "https://github.com/countnazgul/enigma-mixin",
+  ],
   "author": "Stefan Stoichev / sstoichev.eu / stefan.stoichev@gmail.com / @countnazgul",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/countnazgul/enigma-mixin"
+  },
   "scripts": {
     "test": "jest",
     "build-test": "rollup --config",
@@ -35,17 +38,17 @@
   ],
   "engines": {
     "node": ">=8"
-  },  
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.3.1",
     "cross-env": "^5.2.0",
     "extend": "^3.0.2",
     "jest": "^24.0.0",
-    "rollup": "^1.1.2",
+    "rollup": "^1.17.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-filesize": "^6.0.1",
-    "rollup-plugin-license": "^0.8.1",
+    "rollup-plugin-license": "^0.9.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-terser": "^4.0.3",
