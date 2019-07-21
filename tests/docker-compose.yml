@@ -12,9 +12,7 @@ services:
        "-S", "AcceptEULA=yes"
      ]
     volumes:
-      - sense-docs:/docs
+      - sense-docs:$PWD/tests/qvf
       - //var/run/docker.sock:/var/run/docker.sock
     ports:
       - "9076:9076"
-    expose:
-      - 9076
