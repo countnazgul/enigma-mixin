@@ -6,7 +6,7 @@ async function iGetSelectionsNative(qDoc) {
         let selections = await sessionObj.getLayout()
         return selections
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 
 }
@@ -16,7 +16,7 @@ async function mGetSelectionsCurrNative() {
         let selections = await iGetSelectionsNative(this)
         return selections
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 
@@ -33,7 +33,7 @@ async function mGetSelectionsCurr() {
 
         return { selections: selections.qSelectionObject.qSelections, fields: fieldsSelected }
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 
@@ -58,10 +58,10 @@ async function mSelectInField({ fieldName, values, toggle = false }) {
             let selection = await field.selectValues({ qFieldValues: valuesToSelect, qToggleMode: toggle })
             return selection
         } catch (e) {
-            return { error: e.message }
+            throw new Error(e.message)
         }
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 

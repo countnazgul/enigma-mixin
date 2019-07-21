@@ -11,7 +11,7 @@ async function mGetVariablesAll({ showSession = false, showConfig = false, showR
         let sessionObjLayout = await sessionObj.getLayout()
         return sessionObjLayout.qVariableList.qItems
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 
@@ -22,7 +22,7 @@ async function mUpdateVariable(variable) {
 
         return newContent
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 
@@ -41,7 +41,7 @@ async function mCreateVariable({ name, comment = '', definition }) {
         let result = await this.createVariableEx(varProps)
         return result
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 

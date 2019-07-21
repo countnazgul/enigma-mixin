@@ -19,7 +19,7 @@ async function mGetTablesAndFields() {
             return f
         }
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 
@@ -39,7 +39,7 @@ async function mGetTables() {
             return tables
         }
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 
@@ -58,7 +58,7 @@ async function mGetFields() {
 
         return fields
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 }
 
@@ -71,7 +71,7 @@ async function mGetListbox(fieldName) {
         let fieldValues = await sessionObj.getLayout()
         return fieldValues.field.qListObject
     } catch (e) {
-        return { error: e.message }
+        throw new Error(e.message)
     }
 
 }

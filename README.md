@@ -1,10 +1,12 @@
 ## **Under development!**
 
-# enigma.js mixins
-
-enigma.js functionality can be extended via [mixin](https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins). This repository contains set of mixins that can be added to any `enigma.js` instance. Some of the mixins are quite trivial but i've been lazy enough to remember all the objects/params and decided to create these "shortcuts" :)
+`enigma.js` functionality can be extended via [mixin](https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins). This repository contains set of mixins that can be added to any `enigma.js` instance. Some of the mixins are quite trivial but I've been lazy enough to remember the objects/params and decided to create these "shortcuts" :)
 
 btw who ever made the `mixin` option available in `enigma.js` ... Thank you!
+
+## Requirements
+
+TBA
 
 ## Installation
 
@@ -18,13 +20,29 @@ After this install this project:
 
 ## Init
 
+**Browser usage**
 ```javascript
 import enigma from 'enigma.js'
+import schema from 'enigma.js/schemas/12.20.0.json';
 import enigmaMixins from 'enigma-mixins'
 
 // Create enigma session as usual
 // but include the mixin property
-let session = enigma.create({
+const session = enigma.create({
+    schema,
+    mixins: [enigmaMixins],
+    url: 'ws://localhost:4848/app/engineData',
+    createSocket: url => new WebSocket(url),
+});
+```
+**Node JS usage**
+```javascript
+const enigma = require('enigma.js');
+const WebSocket = require('ws');
+const schema = require('enigma.js/schemas/12.20.0.json');
+const enigmaMixins = require('enigma-mixins')
+
+const session = enigma.create({
     schema,
     mixins: [enigmaMixins],
     url: 'ws://localhost:4848/app/engineData',
@@ -48,27 +66,50 @@ After this `qDoc` will have all the mixins available under `qDoc.mixin`
 
 ## Mixins
 
-The available `mixin` are separated in 3 categories:
+The available `mixin` are separated in categories:
 
-* qSelections 
-* qTableAndFields 
-* qVariables
+* Selections 
+* TableAndFields 
+* Variables
+* Extensions
 
-### qSelections
+### Selections
 
-* getCurrSelectionFields - returns the current selections (if any)
-* getCurrentSelections - similar as `getCurrSelectionFields` but simplifies the output - value <-> field format 
-* selectInField - select a value(s) in a specified field
+* `mGetSelectionsCurr` - returns the current selections (if any)
+    * no parameters
+* `mGetSelectionsCurrNative` - similar as `getCurrSelectionFields` but simplifies the output - value <-> field format 
+    * no parameters
+* `mSelectInField` - select a value(s) in a specified field
+    * fieldName
+    * values - string array of values to be selected
+    * toggle (optional. default `false`)
 
-### qTableAndFields
+### TableAndFields
 
-* getTablesAndKeys - ??? 
-* getTablesAndFields - returns an object array with the field <-> table relation
-* getTables - returns an array with all table names
-* getFields - returns an array with all field names
+* `mGetTablesAndFields` - returns an object array with the field <-> table relation
+    * no parameters
+* `mGetTables` - returns an array with all table names
+    * no parameters
+* `mGetFields` - returns an array with all field names
+    * no parameters
+* `mGetListbox` - creates a **session** listbox object for specified field
+    * fieldName
 
-### qVariables
+### Variables
 
-* getAllVariables - return a list with all variables in a document
-* updateVariable - update existing variable
-* createVariable - create new variable
+* `mGetVariablesAll` - return a list with all variables in a document
+    * showSession (optional. default `false`) 
+    * showConfig (optional. default `false`)
+    * showReserved (optional. default `false`)
+* `mUpdateVariable` - update existing variable
+    * TBA
+
+* `mCreateVariable` - create new variable
+    * name - 
+    * comment (optional. default is empty string) - 
+    * definition - 
+
+### Extensions
+
+* `mGetAllExtensionObjects` - return a list with all extensions objects in the document
+    * no parameters

@@ -1,9 +1,17 @@
 {
   "name": "enigma-mixin",
-  "version": "0.0.6",
-  "description": "",
+  "version": "0.0.7",
+  "description": "Set of Qlik Sense enigma.js mixin",
+  "keywords": [
+    "enigma.js",
+    "enigma",
+    "mixin",
+    "qlik",
+    "qlik-sense",
+    "qlik-sense-desktop"
+  ],  
   "homepage": "https://github.com/countnazgul/enigma-mixin",
-  "author": "Stefan Stoichev / sstoichev.eu /stefan.stoichev@gmail.com / @countnazgul",
+  "author": "Stefan Stoichev / sstoichev.eu / stefan.stoichev@gmail.com / @countnazgul",
   "license": "MIT",
   "scripts": {
     "test": "jest",
@@ -25,6 +33,9 @@
     "*.js",
     "*.md"
   ],
+  "engines": {
+    "node": ">=8"
+  },  
   "devDependencies": {
     "@babel/preset-env": "^7.3.1",
     "cross-env": "^5.2.0",

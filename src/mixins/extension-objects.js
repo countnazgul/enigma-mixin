@@ -1,10 +1,3 @@
-async function mGetAllExtensionObjects() {
-    let allInfos = await this.getAllInfos()
-    let extensionObjects = await filterOnlyExtensionObjects(this, allInfos)
-
-    return extensionObjects
-}
-
 const nonExtensionObjects = [
     "barchart",
     "bookmark",
@@ -32,6 +25,14 @@ const nonExtensionObjects = [
     "table",
     "treemap"
 ]
+
+async function mGetAllExtensionObjects() {
+    let allInfos = await this.getAllInfos()
+    let extensionObjects = await filterOnlyExtensionObjects(this, allInfos)
+
+    return extensionObjects
+}
+
 
 
 async function filterOnlyExtensionObjects(qDoc, allObjects) {
@@ -78,7 +79,7 @@ const realExtensionCheck = async function (qDoc, objId) {
         }
 
     } catch (e) {
-        console.log(`${e.message}`)
+        throw new Error(e.message)
     }
     return { qObjProps, isExtension }
 }
