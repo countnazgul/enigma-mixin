@@ -1,5 +1,5 @@
 /**
- * enigma-mixin v0.0.7
+ * enigma-mixin v0.0.8
  * Copyright (c) 2019 Stefan Stoichev
  * This library is licensed under MIT - See the LICENSE file for full details
  */
