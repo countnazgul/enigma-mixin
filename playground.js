@@ -81,12 +81,14 @@ if (process.env.QS_PORT == "4848") {
 async function connect() {
   let session = enigma.create({
     schema,
-    mixins: [docMixin],
+    mixins: docMixin,
     url: `ws://${process.env.QS_HOST}:${process.env.QS_PORT}/app/engineData`,
     createSocket: url => new WebSocket(url),
   });
 
   let global = await session.open()
+
+  let a = await global.mGetAllExtensionObjects()
 
   return ({ session, global })
 }
