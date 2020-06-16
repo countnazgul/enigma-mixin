@@ -11,9 +11,9 @@
             "program": "${workspaceFolder}\\playground.js",
             "env": {
                 "QS_HOST": "localhost",
-                "QS_PORT": "4848",
+                "QS_PORT": "9076",
                 // "QS_DOC": "SkyLine TEST.qvf",
-                "QS_DOC": "Helpdesk Management.qvf",
+                "QS_DOC": "/data/RxSales.qvf",
                 "release": "dev"
             },
         },
