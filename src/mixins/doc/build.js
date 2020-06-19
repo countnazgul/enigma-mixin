@@ -1,3 +1,5 @@
+const { handlePromise } = require('../../lib/helpers');
+
 async function mBuild({
     variables = [],
     script = false,
@@ -5,201 +7,203 @@ async function mBuild({
     connections = [],
     measures = [],
     dimensions = [],
-    objects = [] }, doSave = false) {
+    objects = [] }) {
 
-    let status = {}
-    let errors = { status: false }
+    let [appConnections, error] = await handlePromise(this.getConnections())
+    if (error) throw new Error('build: cannot get app connections')
 
-    if (measures.length > 0) {
-        status.measures = []
-        for (let measure of measures) {
-            let p = await processMasure(measure, this)
-            status.measures.push(p)
+    return Promise.all([
+        await processMeasures(measures, this),
+        await processDimensions(dimensions, this),
+        await processVariables(variables, this),
+        await processScript(script, this),
+        await processAppProperties(appProperties, this),
+        await processConnections(appConnections, connections, this),
+        await processObjects(objects, this)
+    ]).then(function (d) {
+        return {
+            measures: d[0],
+            dimensions: d[1],
+            variables: d[2],
+            script: d[3],
+            appProperties: d[4],
+            connections: d[5],
+            objects: d[6]
         }
-    }
+    })
+}
 
-    if (dimensions.length > 0) {
-        status.dimensions = []
-        for (let dimension of dimensions) {
-            let p = await processDimension(dimension, this)
-            status.dimensions.push(p)
+
+async function processMeasures(measures, app) {
+    return Promise.all(measures.map(async function (measure) {
+        let [obj, objErr] = await handlePromise(app.getMeasure(measure.qInfo.qId))
+
+        // the measure do not exists and need to be created
+        if (objErr) {
+            let [created, error] = await handlePromise(app.createMeasure(measure))
+            if (error) throw new Error('build measure: cannot create measure')
+
+            return { qId: measure.qInfo.qId, status: 'Created' }
         }
-    }
 
-    // if (objects.length > 0) {
-    //     for (let object of objects) {
-    //         let o = await processObjects(object, this)
-    //         status.objects.push(o)
-    //     }
-    // } else {
-    //     console.log('No objects to process')
-    // }
+        // the measure exists and need to be updated
+        let [updated, error] = await handlePromise(obj.setProperties(measure))
+        if (error) throw new Error('build measure: cannot update measure')
 
-    // if (doSave) await this.doSave()
+        return { qId: measure.qInfo.qId, status: 'Updated' }
+    }))
+}
 
-    if (variables.length > 0) {
-        status.variables = []
-        for (let variable of variables) {
-            let o = await processVariable(variable, this)
-            status.variables.push(o)
+async function processDimensions(dimensions, app) {
+    return Promise.all(dimensions.map(async function (dimension) {
+        let [obj, objErr] = await handlePromise(app.getDimension(dimension.qInfo.qId))
+
+        // the dimension do not exists and need to be created
+        if (objErr) {
+            let [created, error] = await handlePromise(app.createDimension(dimension))
+            if (error) throw new Error('build dimension: cannot create dimension')
+
+            return { qId: dimension.qInfo.qId, status: 'Created' }
         }
-    }
 
-    if (script != false) {
-        status.script = {}
-        let s = await this.setScript(script)
-        status.script = { status: 'Set' }
-    }
+        // the dimension exists and need to be updated
+        let [updated, error] = await handlePromise(obj.setProperties(measure))
+        if (error) throw new Error('build dimension: cannot update dimension')
 
-    if (appProperties.qTitle) {
-        status.appProperties = {}
-        let a = await this.setAppProperties(appProperties)
-        status.appProperties = { status: 'Set' }
-    }
+        return { qId: dimension.qInfo.qId, status: 'Updated' }
+    }))
+}
 
-    if (connections.length > 0) {
-        status.connections = []
-        let qConnections = await this.getConnections()
-        for (let connection of connections) {
-            let o = await processConnection(qConnections, connection, this)
-            if (o.status = 'ERROR') {
-                errors.status = true
-                if (!errors.connections) errors.connections = []
-                errors.connections.push(o)
-            } else {
-                status.connections.push(o)
+async function processScript(script, app) {
+    let [s, error] = await handlePromise(app.setScript(script))
+    if (error) throw new Error('build script: cannot set script')
+
+    return { status: 'Set' }
+}
+
+async function processAppProperties(appProperties, app) {
+    let [update, error] = await handlePromise(app.setAppProperties(appProperties))
+    if (error) throw new Error('build app properties: cannot set app properties')
+
+    return { status: 'Set' }
+}
+
+async function processDimensions(dimensions, app) {
+    return Promise.all(dimensions.map(async function (dimension) {
+        let [obj, objErr] = await handlePromise(app.getDimension(dimension.qInfo.qId))
+
+        // the dimension do not exists and need to be created
+        if (objErr) {
+            let [created, error] = await handlePromise(app.createDimension(dimension))
+            if (error) throw new Error('build dimension: cannot create dimension')
+
+            return { qId: dimension.qInfo.qId, status: 'Created' }
+        }
+
+        // the dimension exists and need to be updated
+        let [updated, error] = await handlePromise(obj.setProperties(dimension))
+        if (error) throw new Error('build dimension: cannot update dimension')
+
+        return { qId: dimension.qInfo.qId, status: 'Updated' }
+    }))
+}
+
+async function processVariables(variables, app) {
+    return Promise.all(variables.map(async function (variable) {
+        let [qVar, qVarError] = await handlePromise(app.getVariableByName(variable.qName))
+
+        if (qVarError) {
+            let [created, error] = await handlePromise(app.createVariable(variable))
+            if (error) throw new Error('build variable: cannot create variable')
+
+            return { qId: variable.qName, status: 'Created' }
+        }
+
+        let [updated, error] = await handlePromise(qVar.setProperties(variable))
+        if (error) throw new Error('build variable: cannot update variable')
+
+        return { qId: variable.qName, status: 'Updated' }
+    }))
+}
+
+async function processConnections(appConnections, connections, app) {
+    return Promise.all(connections.map(async function (connection) {
+        let conn = appConnections.find(o => o.qName === connection.qName)
+
+        if (!conn) {
+            let [create, error] = await handlePromise(app.createConnection(connection))
+            if (error) throw new Error('build connection: cannot create connection')
+
+            return { qId: connection.qName, status: 'Created' }
+        }
+
+        let [modify, error] = await handlePromise(app.modifyConnection(connection.qId, connection, true))
+        if (error) throw new Error('build connection: cannot modify connection')
+
+        return { qId: connection.qName, status: 'Updated' }
+
+    }))
+}
+
+async function processObjects(objects, app) {
+    return Promise.all(objects.map(async function (object) {
+        let objId, objType
+        let isGenericObject = false;
+
+        if (!object.qInfo) {
+            isGenericObject = true
+            objId = object.qProperty.qInfo.qId
+            objType = object.qProperty.qInfo.qType
+        } else {
+            objId = object.qInfo.qId
+            objType = object.qInfo.qType
+        }
+
+
+        let [obj, objError] = await handlePromise(app.getObject(objId))
+
+        if (!objError) {
+            if (isGenericObject) {
+                let [updated, error] = await handlePromise(obj.setFullPropertyTree(object))
+                if (error) throw new Error('build object: cannot update object')
+
+                return { qId: objId, status: 'Updated' }
             }
 
-        }
-    }
+            if (!isGenericObject) {
+                let [updated, error] = await handlePromise(obj.setProperties(object))
+                if (error) throw new Error('build object: cannot update object')
 
-    return { status, errors }
-}
-
-async function processMasure(measure, app) {
-    let obj = await app.getMeasure(measure.qInfo.qId).catch(function () {
-        return { error: true }
-    })
-
-    if (obj.error) {
-        let m = await app.createMeasure(measure)
-        return { qId: measure.qInfo.qId, status: 'Created' }
-    }
-
-    let m = await obj.setProperties(measure)
-    return { qId: measure.qInfo.qId, status: 'Updated' }
-
-}
-
-async function processDimension(dimension, app) {
-    let obj = await app.getDimension(dimension.qInfo.qId).catch(function () {
-        return { error: true }
-    })
-
-    if (obj.error) {
-        let m = await app.createDimension(dimension)
-        return { qId: dimension.qInfo.qId, status: 'Created' }
-    }
-
-    let m = await obj.setProperties(dimension)
-    return { qId: dimension.qInfo.qId, status: 'Updated' }
-}
-
-async function processObjects(object, app) {
-    let objId, objType
-    let isGenericObject = false;
-
-    if (!object.qInfo) {
-        isGenericObject = true
-        objId = object.qProperty.qInfo.qId
-        objType = object.qProperty.qInfo.qType
-    } else {
-        objId = object.qInfo.qId
-        objType = object.qInfo.qType
-    }
-
-
-    let obj = await app.getObject(objId).catch(function () {
-        return { error: true }
-    })
-
-    if (!obj.error) {
-        if (isGenericObject) {
-            await obj.setFullPropertyTree(object)
-            return { qId: objId, status: 'Updated' }
+                return { qId: objId, status: 'Updated' }
+            }
         }
 
-        if (!isGenericObject) {
-            await obj.setProperties(object)
-            return { qId: objId, status: 'Updated' }
+        if (objError) {
+            if (isGenericObject) {
+
+                let [o, oError] = await handlePromise(app.createObject({
+                    qInfo: {
+                        qId: `${objId}`,
+                        qType: objType
+                    }
+                }))
+                if (oError) throw new Error('build object: cannot create object')
+
+                let [updated, updatedError] = await handlePromise(o.setFullPropertyTree(object))
+                if (updatedError) throw new Error('build object: cannot update object')
+
+                return { qId: objId, status: 'Created' }
+            }
+
+            if (!isGenericObject) {
+                let [created, createdError] = await handlePromise(obj.createObject(object))
+                if (createdError) throw new Error('build object: cannot create object')
+
+                return { qId: objId, status: 'Created' }
+            }
         }
-    }
-
-    if (obj.error) {
-        if (isGenericObject) {
-            let o = await app.createObject({
-                qInfo: {
-                    qId: `${objId}`,
-                    qType: objType
-                }
-            }).catch(function (f) {
-                let b = 1
-            })
-            await o.setFullPropertyTree(object).catch(function (f) {
-                let b = 1
-            })
-            return { qId: objId, status: 'Created' }
-        }
-
-        if (!isGenericObject) {
-            await obj.createObject(object)
-            return { qId: objId, status: 'Created' }
-        }
-    }
-
-
-
-
-
-    let a = 1
-    // if (obj.error) {
-    //     let m = await app.createDimension(dimension)
-    //     return { qId: dimension.qInfo.qId, status: 'Created' }
-    // }
-
-    // let m = await obj.setProperties(dimension)
-    // return { qId: dimension.qInfo.qId, status: 'Updated' }
+    }))
 }
-
-async function processVariable(variable, app) {
-    let qVar = await app.getVariableByName(variable.qName).catch(() => ({ error: true }))
-
-    if (qVar.error) {
-        let r = await app.createVariable(variable)
-        return { qId: variable.qName, status: 'Created' }
-    }
-
-    let r = await qVar.setProperties(variable)
-    return { qId: variable.qName, status: 'Updated' }
-}
-
-async function processConnection(qConnections, connection, app) {
-    let conn = qConnections.find(o => o.qName === connection.qName)
-
-    if (!conn) {
-        let createConn = await app.createConnection(connection)
-        return { qId: connection.qName, status: 'Created' }
-    }
-
-    let modifyConn = await app.modifyConnection(connection.qId, connection, true).catch(function (e) {
-        return { error: true, message: e.message }
-    })
-
-    if (modifyConn.error) return { qId: connection.qName, status: 'ERROR', message: modifyConn.message }
-
-    return { qId: connection.qName, status: 'Updated' }
-}
-
 
 module.exports = {
     mBuild
