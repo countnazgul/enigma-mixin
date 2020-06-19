@@ -1,17 +1,14 @@
 const objectDefinitions = require('./object-definitions.js');
+const { handlePromise } = require('../../lib/helpers');
 
 async function mUnbuild() {
-    let qApp = this
-
-    let data = await Promise.all([
-        await unbuildVariables(qApp),
-        await unbuildScript(qApp),
-        await unbuildAppProperties(qApp),
-        await unbuildConnections(qApp),
-        await unbuildEntities(qApp)
-    ])
-
-    return {
+    return await Promise.all([
+        await unbuildVariables(this),
+        await unbuildScript(this),
+        await unbuildAppProperties(this),
+        await unbuildConnections(this),
+        await unbuildEntities(this)
+    ]).then((data) => ({
         variables: data[0],
         script: data[1],
         appProperties: data[2],
@@ -19,9 +16,8 @@ async function mUnbuild() {
         dimensions: data[4].dimensions,
         measures: data[4].measures,
         objects: data[4].objects
-    }
+    }))
 }
-
 
 async function unbuildVariables(app) {
     let objProp = objectDefinitions.variableList
@@ -29,129 +25,106 @@ async function unbuildVariables(app) {
     objProp.qShowConfig = false
     objProp.qShowReserved = false
 
-    try {
-        let sessionObj = await app.createSessionObject(objProp)
-        let sessionObjLayout = await sessionObj.getLayout()
-        await app.destroySessionObject(sessionObj.id)
-        return sessionObjLayout.qVariableList.qItems
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    let [sessionObj, sessionObjErr] = await handlePromise(app.createSessionObject(objProp))
+    if (sessionObjErr) throw new Error('unbuild variables: cannot create session object');
+
+    let [sessionObjLayout, sessionObjLayoutErr] = await handlePromise(sessionObj.getLayout())
+    if (sessionObjLayoutErr) throw new Error('unbuild variables: cannot get session object layout');
+
+    let [delSessionObj, delSessionObjErr] = await handlePromise(app.destroySessionObject(sessionObj.id))
+    if (delSessionObjErr) throw new Error('unbuild variables: cannot delete session object');
+
+    return sessionObjLayout.qVariableList.qItems
 }
 
 async function unbuildScript(app) {
-    try {
-        let script = await app.getScript()
-        return script
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    let [script, scriptErr] = await handlePromise(app.getScript())
+    if (scriptErr) throw new Error('unbuild script: cannot fetch script');
+
+    return script
 }
 
 async function unbuildAppProperties(app) {
-    try {
-        let appProperties = await app.getAppProperties()
-        return appProperties
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    let [appProperties, appPropertiesError] = await handlePromise(app.getAppProperties())
+    if (appPropertiesError) throw new Error('unbuild app properties: cannot fetch app properties');
+
+    return appProperties
+
 }
 
 async function unbuildConnections(app) {
-    try {
-        let appConnections = await app.getConnections()
+    let [appConnections, appConnectionsErr] = await handlePromise(app.getConnections())
+    if (appConnectionsErr) throw new Error('unbuild connections: cannot fetch app connections');
 
-        return appConnections
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    return appConnections
 }
 
 async function unbuildEntities(app) {
-    try {
-        let data = {
-            dimensions: [],
-            measures: [],
-            objects: []
-        }
-
-        let errors = []
-
-        let appAllInfos = await app.getAllInfos()
-        let t = JSON.stringify(appAllInfos, null, 4)
-        for (let item of appAllInfos) {
-            if (item.qType == 'dimension') {
-                let dim = await app.getDimension(item.qId)
-                let dimProp = await dim.getProperties()
-                data.dimensions.push(dimProp)
-            }
-
-            if (item.qType == 'measure') {
-                let measure = await app.getMeasure(item.qId)
-                let measureProp = await measure.getProperties()
-                data.measures.push(measureProp)
-            }
-
-
-            if (item.qType != 'dimension' && item.qType != 'measure') {
-                let o = await processObject(item, app)
-
-                if (!o.error) data.objects.push(o)
-                if (o.error) errors.push(o)
-            }
-
-
-
-
-            // if (item.qType != 'dimension'
-            //     && item.qType != 'measure'
-            //     && item.qType != 'embeddedsnapshot'
-            //     && item.qType != 'snapshot'
-            //     && item.qType != 'hiddenbookmark'
-            //     && item.qType != 'story') {
-
-            //     console.log(item.qId)
-            //     let obj = await this.getObject(item.qId)
-
-            // if (item.qType != 'masterobject' && item.qType != 'sheet' && item.qType != 'appprops' && item.qType != 'LoadModel') {
-            //     let parent = await obj.getParent()
-            //     let children = await obj.getChildInfos()
-            // }
-
-
-
-            // }
-        }
-        let a = 1
-        return data
-    } catch (e) {
-        throw new Error(e.message)
+    let data = {
+        dimensions: [],
+        measures: [],
+        objects: []
     }
+
+    let errors = []
+
+    // get list of all objects
+    let [appAllInfos, appAllInfosErr] = await handlePromise(app.getAllInfos())
+    if (appAllInfosErr) throw new Error('unbuild app infos: cannot fetch all app infos')
+
+    return Promise.all(appAllInfos.map(async function (item) {
+        if (item.qType == 'dimension') {
+            let [dim, dimErr] = await handlePromise(app.getDimension(item.qId))
+            if (dimErr) throw new Error('unbuild dimension: cannot fetch dimension')
+
+            let [dimProp, dimPropErr] = await handlePromise(dim.getProperties())
+            if (dimPropErr) throw new Error('unbuild dimension: cannot fetch dimension properties')
+
+            data.dimensions.push(dimProp)
+        }
+
+        if (item.qType == 'measure') {
+            let [measure, measureErr] = await handlePromise(app.getMeasure(item.qId))
+            if (measureErr) throw new Error('unbuild dimension: cannot fetch measure')
+
+            let [measureProp, measurePropErr] = await handlePromise(measure.getProperties())
+            if (measurePropErr) throw new Error('unbuild dimension: cannot fetch measure properties')
+
+            data.measures.push(measureProp)
+        }
+
+        if (item.qType != 'dimension' && item.qType != 'measure') {
+            let o = await processObject(item, app)
+
+            if (!o.error) data.objects.push(o)
+            if (o.error) errors.push(o)
+        }
+    })).then(() => data)
 }
 
 async function processObject(item, app) {
-    let obj = await app.getObject(item.qId).catch(function () {
-        return { error: true }
-    })
+    let [obj, objErr] = await handlePromise(app.getObject(item.qId))
 
     // embeddedsnapshot, snapshot, hiddenbookmark, story --> need to be handled differently
-    if (obj.error) return {
-        ...item,
-        error: true
-    }
+    if (objErr) return { ...item, error: true }
 
-    let parent = await obj.getParent().catch(function () {
-        return { error: true }
-    })
+    let [parent, parentErr] = await handlePromise(obj.getParent())
+    let [children, childrenErr] = await obj.getChildInfos()
 
-    let children = await obj.getChildInfos()
+    if (childrenErr) throw new Error('unbuild entity: cannot fetch entity children')
 
     // parent-less objects - masterobject, sheet, appprops, LoadModel
-    if (parent.error && children.length > 0) {
-        return await obj.getFullPropertyTree()
-    } else {
-        return await obj.getProperties()
+    if (parentErr && children.length > 0) {
+        let [propTree, propTreeErr] = await handlePromise(obj.getFullPropertyTree())
+        if (propTreeErr) throw new Error('unbuild entity: cannot fetch entity full property tree')
+
+        return propTree
     }
+
+    let [prop, propErr] = await handlePromise(obj.getProperties())
+    if (propErr) throw new Error('unbuild entity: cannot fetch entity properties')
+
+    return prop
 }
 
 module.exports = {

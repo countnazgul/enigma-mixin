@@ -47,7 +47,9 @@ if (process.env.QS_PORT == "9076") {
   // let t = await qDoc.mUnbuildScript()
   // let t = await qDoc.mAppProperties()
   // let t = await qDoc.mConnections()
-  let unbuild = await qDoc.mUnbuild()
+  let unbuild = await qDoc.mUnbuild().catch(function (e) {
+    let b = 1
+  })
   // fs.writeFileSync('./unbuild.json', JSON.stringify(unbuild, null, 4))
   // let data = JSON.parse(fs.readFileSync('./unbuild.json'))
   // let build = await qDoc.mBuild(data, true)

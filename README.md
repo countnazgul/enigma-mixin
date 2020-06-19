@@ -125,7 +125,7 @@ The available `mixin` are separated in categories:
 
 ### Unbuild
 
-* `mUnbuild` - (same as `corectl`) Extracts all parts of a Qlik Sense app (apart from the data itself) into JSON object. The resulted JSON object hav the followig format:
+* `mUnbuild` - (same as `corectl`) Extracts all parts of a Qlik Sense app (apart from the data itself) into JSON object. The resulted JSON object hav the following format:
 
     - appProperties (`object`)
     - connections (`array`)
@@ -135,7 +135,7 @@ The available `mixin` are separated in categories:
     - script (`string`)
     - variables (`array`)
 
-The result JSON can be stored in file (or multiple files) and put inder version control
+The result JSON can be stored in file (or multiple files) and put under version control
 
 ### Build
 
@@ -144,6 +144,6 @@ The result JSON can be stored in file (or multiple files) and put inder version 
 The result of the `build` command will be an object with two properties - `status` and `errors`
 
 * `status` - will contain the result of all objects with a state if the object was updated or created
-* `errors` - by default this object will have one propety - `status: false`. In case of **ANY** errors during the build process the `status` will be changed to `true` and additional properties will be added based on which object(s) raised the error
+* `errors` - by default this object will have one property - `status: false`. In case of **ANY** errors during the build process the `status` will be changed to `true` and additional properties will be added based on which object(s) raised the error
 
 **To preserve the changes the app have to be saved. The build command do not save the app automatically!**

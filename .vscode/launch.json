@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Playground",
-            "program": "${workspaceFolder}\\playground.js",
+            "program": "${workspaceFolder}/playground.js",
             "env": {
                 "QS_HOST": "localhost",
                 "QS_PORT": "9076",

@@ -20,7 +20,6 @@
     "test": "jest",
     "build-test": "rollup --config",
     "build": "rollup -c && cross-env NODE_ENV=production rollup -c",
-    "jsdoc": "jsdoc ./src -c ./jsdoc-config.json -r -d ./docs",
     "publish_local": "npm publish --registry http://192.168.0.10:4873"
   },
   "dependencies": {},
