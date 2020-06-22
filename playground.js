@@ -1,8 +1,9 @@
-const OS = require('os')
+const OS = require('os');
+const fs = require('fs');
 
 const enigma = require('enigma.js');
 const WebSocket = require('ws');
-const schema = require('enigma.js/schemas/12.170.2.json');
+const schema = require('enigma.js/schemas/12.612.0.json');
 
 var docMixin = {}
 if (process.env.release == "dev") {
@@ -24,12 +25,12 @@ if (process.env.release == "prod-min") {
 // const qsDoc = process.env.QS_DOC
 // var qsDocPath = ""
 
-// var qsDocPath = ""
+let qsDocPath = ""
 
 
-if (process.env.QS_PORT == "4848") {
+if (process.env.QS_PORT == "9076") {
   const OSUser = OS.userInfo().username;
-  qsDocPath = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\${process.env.QS_DOC}`
+  qsDocPath = process.env.QS_DOC
 }
 
 
@@ -41,9 +42,25 @@ if (process.env.QS_PORT == "4848") {
   qSession = qlikConnect.session
   qGlobal = qlikConnect.global
 
+  // let t = await qGlobal.createDocEx('build-test')
   let qDoc = await qGlobal.openDoc(qsDocPath)
-  let allExtensions = await qDoc.mGetAllExtensionObjects()
-  let a = 1
+  // let t = await qDoc.mUnbuildVariables({ showSession: true, showConfig: true, showReserved: true })
+  // let t = await qDoc.mUnbuildScript()
+  // let t = await qDoc.mAppProperties()
+  // let t = await qDoc.mConnections()
+  // let unbuild = await qDoc.mUnbuild().catch(function (e) {
+  //   let b = 1
+  // })
+  // fs.writeFileSync('./unbuild.json', JSON.stringify(unbuild, null, 4))
+  let data = JSON.parse(fs.readFileSync('./unbuild.json'))
+  let build = await qDoc.mBuild(data).catch(function (e) {
+    let c = 1
+  })
+
+  // await qDoc.doSave()
+  let a = 1;
+  // let allExtensions = await qDoc.mGetAllExtensionObjects()
+  // let a = 1
 
   // let list = await qGlobal.getDocList()
   // console.log(list)
@@ -88,7 +105,8 @@ async function connect() {
 
   let global = await session.open()
 
-  let a = await global.mGetAllExtensionObjects()
+  let a = 1
+  // let a = await global.mGetAllExtensionObjects()
 
   return ({ session, global })
 }
