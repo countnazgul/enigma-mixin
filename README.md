@@ -123,9 +123,12 @@ The available `mixin` are separated in categories:
 - `mGetAllExtensionObjects` - return a list with all extensions objects in the document
   - no parameters
 
+## Build/Unbuild
+If you haven't used [corectl](https://github.com/qlik-oss/corectl) now it the time to start :) But I've wanted to have the same/similar functionality (for building/unbuilding app) in [enigma.js](https://github.com/qlik-oss/enigma.js/blob/master/schemas/12.67.2.json) as well
+
 ### Unbuild
 
-* `mUnbuild` - (same as `corectl`) Extracts all parts of a Qlik Sense app (apart from the data itself) into JSON object. The resulted JSON object hav the following format:
+* `mUnbuild` - Extracts all parts of a Qlik Sense app (apart from the data itself) into JSON object. The resulted JSON object have the following format:
 
     - appProperties (`object`)
     - connections (`array`)
@@ -139,11 +142,16 @@ The result JSON can be stored in file (or multiple files) and put under version 
 
 ### Build
 
-* `mBuild` - (same as `corectl`) Opposite to `unbuild`. Provide a JSON object with Qlik objects and this mixin will update the existing objects or, if they do not exists, it will create them. The structure of the input JSON object must in specific format (see `unbuild`). 
+* `mBuild` - Opposite to `unbuild`. Provide a JSON object with Qlik objects and this mixin will update the existing objects or, if they do not exists, it will create them. The structure of the input JSON object must be in specific format (see `unbuild`). 
 
-The result of the `build` command will be an object with two properties - `status` and `errors`
+### **To preserve the changes the app have to be saved. The build command do not save the app automatically!**
 
-* `status` - will contain the result of all objects with a state if the object was updated or created
-* `errors` - by default this object will have one property - `status: false`. In case of **ANY** errors during the build process the `status` will be changed to `true` and additional properties will be added based on which object(s) raised the error
+Both `mBuild` and `mUnbuild` are throwing errors (if there are any errors of course). Because of this they need to be followed by `catch` ... just in case. For example:
 
-**To preserve the changes the app have to be saved. The build command do not save the app automatically!**
+```javascript
+  let build = await qDoc.mBuild(data).catch(function (e) {
+    // do something with the error here
+  })
+```  
+
+
