@@ -1,4 +1,5 @@
 const objectDefinitions = require('./object-definitions.js');
+const { handlePromise } = require('../../lib/helpers');
 
 async function mGetVariablesAll({ showSession = false, showConfig = false, showReserved = false } = {}) {
     let objProp = objectDefinitions.variableList
@@ -6,27 +7,27 @@ async function mGetVariablesAll({ showSession = false, showConfig = false, showR
     objProp.qShowConfig = showConfig
     objProp.qShowReserved = showReserved
 
-    try {
-        let sessionObj = await this.createSessionObject(objProp)
-        let sessionObjLayout = await sessionObj.getLayout()
-        return sessionObjLayout.qVariableList.qItems
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    let [sessionObj, sessionObjError] = await handlePromise(this.createSessionObject(objProp))
+    if (sessionObjError) throw new Error(sessionObjError.message)
+
+    let [layout, layoutError] = handlePromise(await sessionObj.getLayout())
+    if (layoutError) throw new Error(layoutError.message)
+
+    return layout.qVariableList.qItems
+
 }
 
 async function mUpdateVariable(variable) {
-    try {
-        let variableContent = await this.getVariableById(variable.qInfo.qId)
-        let newContent = await variableContent.setProperties(variable)
+    let [variableContent, variableContentError] = await handlePromise(this.getVariableById(variable.qInfo.qId))
+    if (variableContentError) throw new Error(variableContentError.message)
 
-        return newContent
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    let [newContent, newContentError] = await handlePromise(variableContent.setProperties(variable))
+    if (newContentError) throw new Error(newContentError.message)
+
+    return newContent
 }
 
-async function mCreateVariable({ name, comment = '', definition }) {
+async function mCreateVariable({ name = '', comment = '', definition = '' }) {
 
     let varProps = {
         "qInfo": {
@@ -37,14 +38,11 @@ async function mCreateVariable({ name, comment = '', definition }) {
         "qDefinition": definition
     }
 
-    try {
-        let result = await this.createVariableEx(varProps)
-        return result
-    } catch (e) {
-        throw new Error(e.message)
-    }
-}
+    let [created, createdError] = await handlePromise(this.createVariableEx(varProps))
+    if (createdError) throw new Error(createdError.message)
 
+    return result
+}
 
 module.exports = {
     mGetVariablesAll,
