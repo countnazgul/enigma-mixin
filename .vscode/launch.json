@@ -13,7 +13,8 @@
                 "QS_HOST": "localhost",
                 "QS_PORT": "9076",
                 // "QS_DOC": "SkyLine TEST.qvf",
-                "QS_DOC": "/data/RxSales.qvf",
+                // "QS_DOC": "/data/RxSales.qvf",
+                "QS_DOC": "/data/build-test.qvf",
                 "release": "dev"
             },
         },

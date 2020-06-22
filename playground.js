@@ -42,6 +42,7 @@ if (process.env.QS_PORT == "9076") {
   qSession = qlikConnect.session
   qGlobal = qlikConnect.global
 
+  // let t = await qGlobal.createDocEx('build-test')
   let qDoc = await qGlobal.openDoc(qsDocPath)
   // let t = await qDoc.mUnbuildVariables({ showSession: true, showConfig: true, showReserved: true })
   // let t = await qDoc.mUnbuildScript()
@@ -55,6 +56,8 @@ if (process.env.QS_PORT == "9076") {
   let build = await qDoc.mBuild(data).catch(function (e) {
     let c = 1
   })
+
+  // await qDoc.doSave()
   let a = 1;
   // let allExtensions = await qDoc.mGetAllExtensionObjects()
   // let a = 1
