@@ -1,6 +1,6 @@
 {
   "name": "enigma-mixin",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Set of Qlik Sense enigma.js mixin",
   "keywords": [
     "enigma.js",
@@ -27,10 +27,9 @@
   "files": [
     "dist/*",
     "src/*",
-    "tests/*",
     "*.json",
-    "*.js",
-    "*.md"
+    "*.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=8"

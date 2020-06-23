@@ -4,3 +4,4 @@ tests
 unbuild.json
 playground.js
 rollup.config.js
+package-lock.json
