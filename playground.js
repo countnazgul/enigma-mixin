@@ -52,10 +52,18 @@ if (process.env.QS_PORT == "9076") {
   //   let b = 1
   // })
   // fs.writeFileSync('./unbuild.json', JSON.stringify(unbuild, null, 4))
-  let data = JSON.parse(fs.readFileSync('./unbuild.json'))
-  let build = await qDoc.mBuild(data).catch(function (e) {
+  // let data = JSON.parse(fs.readFileSync('./unbuild.json'))
+  // let build = await qDoc.mBuild(data).catch(function (e) {
+  //   let c = 1
+  // })
+
+  let extensions = await qDoc.mGetAllExtensionObjects().catch(function (e) {
     let c = 1
   })
+
+
+
+  // let b = await qDoc.mGetListbox('Month')
 
   // await qDoc.doSave()
   let a = 1;

@@ -1,79 +1,50 @@
 const objectDefinitions = require('./object-definitions.js')
+const { handlePromise } = require('../../lib/helpers');
 
 async function mGetTablesAndFields() {
 
-    try {
-        let tables = await this.getTablesAndKeys({}, {}, 0, true, false)
+    let [tables, error] = await handlePromise(this.getTablesAndKeys({}, {}, 0, true, false))
+    if (error) throw new Error(error.message)
 
-        let f = [];
-
-        if (tables.qtr.length == 0) {
-            return f
-        } else {
-            for (let table of tables.qtr) {
-                for (let field of table.qFields) {
-                    f.push({ table: table.qName, field: field.qName })
-                }
-            }
-
-            return f
-        }
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    return tables.qtr.map(function (t) {
+        return t.qFields.map(function (f) {
+            return { table: t.qName, field: f.qName }
+        })
+    }).flat()
 }
 
 async function mGetTables() {
-    try {
-        let qTables = await this.getTablesAndKeys({}, {}, 0, true, false)
+    let [qTables, qTablesError] = await handlePromise(this.getTablesAndKeys({}, {}, 0, true, false))
+    if (qTablesError) throw new Error(qTablesError.message)
 
-        let tables = [];
-
-        if (qTables.length == 0) {
-            return tables
-        } else {
-            for (let table of qTables.qtr) {
-                tables.push(table.qName)
-            }
-
-            return tables
-        }
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    return qTables.qtr.map((t) => t.qName)
 }
 
 async function mGetFields() {
-    try {
+    let [qTables, qTablesError] = await handlePromise(this.getTablesAndKeys({}, {}, 0, true, false))
+    if (qTablesError) throw new Error(qTablesError.message)
 
-        let qTables = await this.getTablesAndKeys({}, {}, 0, true, false)
-
-        let fields = [];
-
-        for (let table of qTables.qtr) {
-            for (let field of table.qFields) {
-                fields.push(field.qName)
-            }
-        }
-
-        return fields
-    } catch (e) {
-        throw new Error(e.message)
-    }
+    return qTables.qtr.map(function (t) {
+        return t.qFields.map(function (f) {
+            return f.qName
+        })
+    }).flat()
 }
 
 async function mGetListbox(fieldName) {
+    let lbDef = objectDefinitions.listBox
+    lbDef.field.qListObjectDef.qDef.qFieldDefs = [fieldName]
 
-    try {
-        let lbDef = objectDefinitions.listBox
-        lbDef.field.qListObjectDef.qDef.qFieldDefs.push(fieldName)
-        let sessionObj = await this.createSessionObject(lbDef)
-        let fieldValues = await sessionObj.getLayout()
-        return fieldValues.field.qListObject
-    } catch (e) {
-        throw new Error(e.message)
+    let [sessionObj, sessionObjErr] = await handlePromise(this.createSessionObject(lbDef))
+    if (sessionObjErr) throw new Error(sessionObjErr.message)
+
+    let [layout, layoutError] = await handlePromise(sessionObj.getLayout())
+    if (layoutError) throw new Error(layoutError.message)
+
+    return {
+        sessionObj,
+        layout
     }
-
 }
 
 module.exports = {

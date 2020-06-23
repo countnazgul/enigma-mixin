@@ -1,3 +1,5 @@
+const { handlePromise } = require('../../lib/helpers');
+
 const nonExtensionObjects = [
     "barchart",
     "bookmark",
@@ -27,12 +29,11 @@ const nonExtensionObjects = [
 ]
 
 async function mGetAllExtensionObjects() {
-    let allInfos = await this.getAllInfos()
-    let extensionObjects = await filterOnlyExtensionObjects(this, allInfos)
+    let [allInfos, error] = await handlePromise(this.getAllInfos())
+    if (error) throw new Error(error.message)
 
-    return extensionObjects
+    return await filterOnlyExtensionObjects(this, allInfos)
 }
-
 
 
 async function filterOnlyExtensionObjects(qDoc, allObjects) {
@@ -40,47 +41,40 @@ async function filterOnlyExtensionObjects(qDoc, allObjects) {
         return nonExtensionObjects.indexOf(o.qType) == -1
     })
 
-    let realExtensionObjects = []
-    if (possibleExtensionObjects.length > 0) {
-        for (let extObj of possibleExtensionObjects) {
-            let isReallyExtension = await realExtensionCheck(qDoc, extObj.qId)
-            if (isReallyExtension.isExtension) {
-                realExtensionObjects.push({
-                    appName: qDoc.id,
-                    objId: isReallyExtension.qObjProps.qInfo.qId,
-                    objType: isReallyExtension.qObjProps.qInfo.qType,
-                    extName: isReallyExtension.qObjProps.extensionMeta.name,
-                    extVersion: isReallyExtension.qObjProps.version,
-                    extVisible: isReallyExtension.qObjProps.extensionMeta.visible,
-                    extIsBundle: !isReallyExtension.qObjProps.extensionMeta.isThirdParty,
-                    extIsLibrary: isReallyExtension.qObjProps.extensionMeta.isLibraryItem,
-                    qProps: isReallyExtension.qObjProps
-                })
-            }
-        }
+    return await Promise.all(possibleExtensionObjects.map(async function (extObj) {
+        let isReallyExtension = await realExtensionCheck(qDoc, extObj.qId)
 
-        return realExtensionObjects
-    } else {
-        return []
-    }
+        if (isReallyExtension.isExtension) return {
+            appName: qDoc.id,
+            objId: isReallyExtension.qObjProps.qInfo.qId,
+            objType: isReallyExtension.qObjProps.qInfo.qType,
+            extName: isReallyExtension.qObjProps.extensionMeta.name,
+            extVersion: isReallyExtension.qObjProps.version,
+            extVisible: isReallyExtension.qObjProps.extensionMeta.visible,
+            extIsBundle: !isReallyExtension.qObjProps.extensionMeta.isThirdParty,
+            extIsLibrary: isReallyExtension.qObjProps.extensionMeta.isLibraryItem,
+            qProps: isReallyExtension.qObjProps
+        }
+    })).then(function (o) {
+        // make sure we filter out all object which are not 
+        // native object but are not extensions as well 
+        return o.filter(function (a) {
+            return a != undefined
+        })
+    })
 }
 
 const realExtensionCheck = async function (qDoc, objId) {
     let isExtension = false
-    let qObjProps = {}
 
-    try {
-        let qObj = await qDoc.getObject(objId)
+    let [qObj, qObjError] = await handlePromise(qDoc.getObject(objId))
+    if (qObjError) throw new Error(qObjError.message)
 
-        qObjProps = await qObj.getProperties()
+    let [qObjProps, qObjPropsError] = await handlePromise(qObj.getProperties())
+    if (qObjPropsError) throw new Error(qObjPropsError.message)
 
-        if (qObjProps.extensionMeta) {
-            isExtension = true
-        }
+    isExtension = qObjProps.extensionMeta ? true : false
 
-    } catch (e) {
-        throw new Error(e.message)
-    }
     return { qObjProps, isExtension }
 }
 
