@@ -12,7 +12,10 @@
             "env": {
                 "QS_HOST": "localhost",
                 "QS_PORT": "9076",
-                "QS_DOC": "/data/Consumer_Sales(1).qvf",
+                // "QS_PORT": "4848",
+                // "QS_DOC": "C:\\Users\\countnazgul\\Documents\\Qlik\\Sense\\Apps\\Consumer_Sales(1).qvf",
+                // "QS_DOC": "/data/Consumer_Sales(1).qvf",
+                "QS_DOC": "/data/Executive Dashboard(1).qvf",
                 // "QS_DOC": "/data/RxSales.qvf",
                 // "QS_DOC": "/data/build-test.qvf",
                 "release": "dev"

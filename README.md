@@ -1,6 +1,6 @@
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T0148ZP)
 
-## **Under development!**
+## **Beta stage**
 
 `enigma.js` functionality can be extended via [mixin](https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins). This repository contains set of mixins that can be added to any `enigma.js` instance. Some of the mixins are quite trivial but I've been lazy enough to remember the objects/params and decided to create these "shortcuts" :)
 
@@ -61,36 +61,42 @@ At the moment this project includes only mixins that are extending the `enigma.j
 
 ```javascript
 let global = await session.open();
-let qDoc = await global.openDoc(
-  "C:\\Users\\User1\\Documents\\Qlik\\Sense\\Apps\\Helpdesk Management.qvf"
-);
+let qDoc = await global.openDoc("/data/Helpdesk Management.qvf");
 ```
 
-After this `qDoc` will have all the mixins available under `qDoc.mixin`
+After this `qDoc` will have all the mixins available
 
-![mixin](https://raw.githubusercontent.com/countnazgul/enigma-mixin/master/src/images/mixin.png)
+![mixin](./src/images/mixin.png)
 
 ## Mixins
 
-The available `mixin` are separated in categories:
+The available `mixin` are "grouped" in the following categories:
 
 - Selections
 - TableAndFields
 - Variables
 - Extensions
-- Unbuild
-- Build
+- Build/Unbuild
 
 ### Selections
 
-- `mGetSelectionsCurr` - returns the current selections (if any)
+- `mSelectionsAll` - returns the current selections (if any)
   - no parameters
-- `mGetSelectionsCurrNative` - similar as `getCurrSelectionFields` but simplifies the output - value <-> field format
+- `mSelectionsFields` - return just an array of the fields, having selections in them
   - no parameters
-- `mSelectInField` - select a value(s) in a specified field
-  - fieldName
-  - values - string array of values to be selected
-  - toggle (optional. default `false`)
+- `mSelectionsSimple` - returns array of `field <-> selected value`
+  - `groupByField` (`optional`; default `false`) If this argument is provided the array will be grouped by field name:
+    ```
+    [
+      {field: "Field 1": values: [...]},
+      {field: "Field 2": values: [...]},
+      ...
+    ]
+    ```
+- `mSelectInField` - select a value(s) in the specified field
+  - field - field name
+  - values - array of string values to be selected
+  - toggle (`optional`; default `false`)
 
 ### TableAndFields
 
@@ -100,31 +106,38 @@ The available `mixin` are separated in categories:
   - no parameters
 - `mGetFields` - returns an array with all field names
   - no parameters
-- `mGetListbox` - creates a **session** listbox object for specified field
+- `mCreateSessionListbox` - creates a **session** listbox object for the specified field
   - fieldName
 
 ### Variables
 
-- `mGetVariablesAll` - return a list with all variables in a document
-  - showSession (optional. default `false`)
-  - showConfig (optional. default `false`)
-  - showReserved (optional. default `false`)
-- `mUpdateVariable` - update existing variable
+- `mVariableGetAll` - return a list with all variables in the document
+  - showSession (`optional`; default `false`)
+  - showConfig (`optional`; default `false`)
+  - showReserved (`optional`; default `false`)
 
-  - TBA
+- `mVariableUpdateById` - update existing variable by id
+  - id - id of the variable, to be updated
+  - definition - the expression/definition of the variable
+  - comment - (`optional`)
 
-- `mCreateVariable` - create new variable
-  - name -
-  - comment (optional. default is empty string) -
-  - definition -
+- `mVariableUpdateByName` - update existing variable by name
+  - name - name of the variable, to be updated
+  - definition - the expression/definition of the variable
+  - comment - (`optional`)
+
+- `mVariableCreate` - create new variable
+  - name - (`optional`; default is empty string)
+  - comment (`optional`; default is empty string)
+  - definition (`optional`;default is empty string)
 
 ### Extensions
 
-- `mGetAllExtensionObjects` - return a list with all extensions objects in the document
+- `mExtensionObjectsAll` - return a list with all extensions objects in the document
   - no parameters
 
 ## Build/Unbuild
-If you haven't used [corectl](https://github.com/qlik-oss/corectl) now it the time to start :) But I've wanted to have the same/similar functionality (for building/unbuilding app) in [enigma.js](https://github.com/qlik-oss/enigma.js/blob/master/schemas/12.67.2.json) as well
+If you haven't used [corectl](https://github.com/qlik-oss/corectl) now its a good time to start :) But I've wanted to have the same/similar functionality (for building/unbuilding app) in [enigma.js](https://github.com/qlik-oss/enigma.js/blob/master/schemas/12.67.2.json) as well
 
 ### Unbuild
 

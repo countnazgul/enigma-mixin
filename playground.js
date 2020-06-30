@@ -34,6 +34,12 @@ if (process.env.QS_PORT == "9076") {
 }
 
 
+if (process.env.QS_PORT == "4848") {
+  const OSUser = OS.userInfo().username;
+  qsDocPath = process.env.QS_DOC
+}
+
+
 
 
 
@@ -57,9 +63,65 @@ if (process.env.QS_PORT == "9076") {
   //   let c = 1
   // })
 
-  let extensions = await qDoc.mGetAllExtensionObjects().catch(function (e) {
+  // let extensions1 = await qDoc.mSelectInFieldSimple({
+  //   fieldName: 'Month',
+  //   values: [4, 5, 6],
+  //   toggle: false,
+  //   isNumber: false
+  // }).catch(function (e) {
+  //   let c = 1
+  // })
+
+  // let extensions1 = await qDoc.mSelectInField(
+  //   'Month',
+  //   ['May', 'Apr'],
+  //   false).catch(function (e) {
+  //     let c = 1
+  //   })
+
+  // await qDoc.mSelectInField(
+  //   'state_name',
+  //   ['Minnesota', 'Ohio', 'Texas'],
+  //   false).catch(function (e) {
+  //     let c = 1
+  //   })
+
+  // await qDoc.mSelectInField(
+  //   'Product Sub Group Desc',
+  //   ['Cheese', 'Ice Cream', 'Juice', 'Chips'],
+  //   false).catch(function (e) {
+  //     let c = 1
+  //   })
+
+
+  // let extensions = await qDoc.mSelectionsGetAll().catch(function (e) {
+  //   let c = 1
+  // })
+
+  // let extensions2 = await qDoc.mSelectionsGetSimple().catch(function (e) {
+  //   let c = 1
+  // })
+
+  let variablesAll = await qDoc.mVariableGetAll().catch(function (e) {
     let c = 1
   })
+
+  // let variableUpdate = await qDoc.mVariableUpdateById('ddfa82ca-e199-4baf-b1f5-7f8313ae6cbc', '=sum(test)').catch(function (e) {
+  //   let c = 1
+  // })
+
+  // let variableUpdate = await qDoc.mVariableUpdateByName('vLanguage', '=sum(test)').catch(function (e) {
+  //   let c = 1
+  // })
+
+  let variableCreate = await qDoc.mVariableCreate('vLanguage1', '=sum(test)').catch(function (e) {
+    let c = 1
+  })  
+
+
+  // let extensions = await qDoc.mGetSelectionsCurr().catch(function (e) {
+  //   let c = 1
+  // })
 
 
 

@@ -2,7 +2,6 @@ const objectDefinitions = require('./object-definitions.js')
 const { handlePromise } = require('../../lib/helpers');
 
 async function mGetTablesAndFields() {
-
     let [tables, error] = await handlePromise(this.getTablesAndKeys({}, {}, 0, true, false))
     if (error) throw new Error(error.message)
 
@@ -31,7 +30,7 @@ async function mGetFields() {
     }).flat()
 }
 
-async function mGetListbox(fieldName) {
+async function mCreateSessionListbox(fieldName) {
     let lbDef = objectDefinitions.listBox
     lbDef.field.qListObjectDef.qDef.qFieldDefs = [fieldName]
 
@@ -51,5 +50,5 @@ module.exports = {
     mGetTablesAndFields,
     mGetTables,
     mGetFields,
-    mGetListbox
+    mCreateSessionListbox
 } 
