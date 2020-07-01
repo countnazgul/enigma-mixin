@@ -4,16 +4,20 @@ async function mExtensionObjectsAll() {
     let [allInfos, error] = await handlePromise(this.getAllInfos())
     if (error) throw new Error(error.message)
 
-    return await filterOnlyExtensionObjects(this, allInfos)
+    let [props, propsError] = await handlePromise(this.getAppProperties())
+    if (propsError) throw new Error(propsError.message)
+
+    return await filterOnlyExtensionObjects(this, props, allInfos)
 }
 
-async function filterOnlyExtensionObjects(qDoc, allObjects) {    
+async function filterOnlyExtensionObjects(qDoc, props, allObjects) {
     return await Promise.all(allObjects.map(async function (extObj) {
         let isReallyExtension = await realExtensionCheck(qDoc, extObj.qId)
 
         if (isReallyExtension.isExtension) {
             return {
-                appName: qDoc.id,
+                appId: qDoc.id,
+                appName: props.qTitle,
                 objId: isReallyExtension.qObjProps.qInfo.qId,
                 objType: isReallyExtension.qObjProps.qInfo.qType,
                 extName: isReallyExtension.qObjProps.extensionMeta.name,
