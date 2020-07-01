@@ -18,7 +18,7 @@ const variableList = {
 const listBox = {
     "qInfo": {
         "qId": "",
-        "qType": "Combo"
+        "qType": ""
     },
     "field": {
         "qListObjectDef": {

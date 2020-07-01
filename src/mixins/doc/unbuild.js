@@ -17,6 +17,23 @@ async function mUnbuild() {
         measures: data[4].measures,
         objects: data[4].objects
     }))
+
+
+    // let variables = await unbuildVariables(this)
+    // let script = await unbuildScript(this)
+    // let appProperties = await unbuildAppProperties(this)
+    // let connections = await unbuildConnections(this)
+    // let entities = await unbuildEntities(this)
+
+    // return {
+    //     variables,
+    //     script,
+    //     appProperties,
+    //     connections,
+    //     dimensions: entities.dimensions,
+    //     measures: entities.measures,
+    //     objects: entities.objects
+    // }
 }
 
 async function unbuildVariables(app) {
@@ -109,9 +126,9 @@ async function processObject(item, app) {
     if (objErr) return { ...item, error: true }
 
     let [parent, parentErr] = await handlePromise(obj.getParent())
-    let [children, childrenErr] = await obj.getChildInfos()
+    let [children, childrenErr] = await handlePromise(obj.getChildInfos())
 
-    if (childrenErr) throw new Error('unbuild entity: cannot fetch entity children')
+    if (childrenErr) throw new Error(`unbuild entity: cannot fetch entity children`)
 
     // parent-less objects - masterobject, sheet, appprops, LoadModel
     if (parentErr && children.length > 0) {

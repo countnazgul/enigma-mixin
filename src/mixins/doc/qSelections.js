@@ -56,6 +56,7 @@ async function mSelectionsSimple(groupByField = false) {
 async function mSelectInField(fieldName, values, toggle = false) {
     let lbDef = objectDefinitions.listBox
     lbDef.field.qListObjectDef.qDef.qFieldDefs = [fieldName]
+    lbDef.qInfo.qType = "session-listbox"
 
     let [sessionObj, sessionObjErr] = await handlePromise(this.createSessionObject(lbDef))
     if (sessionObjErr) throw new Error(sessionObjErr.message)

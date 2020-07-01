@@ -30,9 +30,10 @@ async function mGetFields() {
     }).flat()
 }
 
-async function mCreateSessionListbox(fieldName) {
+async function mCreateSessionListbox(fieldName, type = "session-listbox") {
     let lbDef = objectDefinitions.listBox
     lbDef.field.qListObjectDef.qDef.qFieldDefs = [fieldName]
+    lbDef.qInfo.qType = type
 
     let [sessionObj, sessionObjErr] = await handlePromise(this.createSessionObject(lbDef))
     if (sessionObjErr) throw new Error(sessionObjErr.message)

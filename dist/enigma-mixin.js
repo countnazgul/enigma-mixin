@@ -1,5 +1,5 @@
 /**
- * enigma-mixin v0.0.11
+ * enigma-mixin v0.0.16
  * Copyright (c) 2020 Stefan Stoichev
  * This library is licensed under MIT - See the LICENSE file for full details
  */
@@ -8,7 +8,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
     (global = global || self, global['enigma-mixin'] = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
     const sessionList = {
       "qInfo": {
@@ -28,7 +28,7 @@
     const listBox = {
       "qInfo": {
         "qId": "",
-        "qType": "Combo"
+        "qType": ""
       },
       "field": {
         "qListObjectDef": {
@@ -43,7 +43,7 @@
           "qInitialDataFetch": [{
             "qTop": 0,
             "qLeft": 0,
-            "qHeight": 100,
+            "qHeight": 10000,
             "qWidth": 1
           }]
         }
@@ -53,284 +53,6 @@
       sessionList,
       variableList,
       listBox
-    };
-
-    async function mGetVariablesAll({
-      showSession = false,
-      showConfig = false,
-      showReserved = false
-    } = {}) {
-      let objProp = objectDefinitions.variableList;
-      objProp.qShowSession = showSession;
-      objProp.qShowConfig = showConfig;
-      objProp.qShowReserved = showReserved;
-
-      try {
-        let sessionObj = await this.createSessionObject(objProp);
-        let sessionObjLayout = await sessionObj.getLayout();
-        return sessionObjLayout.qVariableList.qItems;
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    async function mUpdateVariable(variable) {
-      try {
-        let variableContent = await this.getVariableById(variable.qInfo.qId);
-        let newContent = await variableContent.setProperties(variable);
-        return newContent;
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    async function mCreateVariable({
-      name,
-      comment = '',
-      definition
-    }) {
-      let varProps = {
-        "qInfo": {
-          "qType": "variable"
-        },
-        "qName": name,
-        "qComment": comment,
-        "qDefinition": definition
-      };
-
-      try {
-        let result = await this.createVariableEx(varProps);
-        return result;
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    var qVariables = {
-      mGetVariablesAll,
-      mUpdateVariable,
-      mCreateVariable
-    };
-
-    async function iGetSelectionsNative(qDoc) {
-      try {
-        let sessionObj = await qDoc.createSessionObject(objectDefinitions.sessionList);
-        let selections = await sessionObj.getLayout();
-        return selections;
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    async function mGetSelectionsCurrNative() {
-      try {
-        let selections = await iGetSelectionsNative(this);
-        return selections;
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-    /**
-     * Get current selections
-     */
-
-
-    async function mGetSelectionsCurr() {
-      try {
-        let selections = await iGetSelectionsNative(this);
-        let fieldsSelected = selections.qSelectionObject.qSelections.map(function (s) {
-          return s.qField;
-        });
-        return {
-          selections: selections.qSelectionObject.qSelections,
-          fields: fieldsSelected
-        };
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-    /**
-     * Select value(s) in a field
-     * @param {string} fieldName - Name of the field
-     * @param {array} values - String array with the values to be selected
-     * @param {boolean} [toggle=false] toggle - How to apply the selection
-     */
-
-
-    async function mSelectInField({
-      fieldName,
-      values,
-      toggle = false
-    }) {
-      try {
-        let field = await this.getField(fieldName);
-        let valuesToSelect = values.map(function (v) {
-          return {
-            qText: v
-          };
-        });
-
-        try {
-          let selection = await field.selectValues({
-            qFieldValues: valuesToSelect,
-            qToggleMode: toggle
-          });
-          return selection;
-        } catch (e) {
-          throw new Error(e.message);
-        }
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    var qSelections = {
-      mGetSelectionsCurr,
-      mGetSelectionsCurrNative,
-      mSelectInField
-    };
-
-    async function mGetTablesAndFields() {
-      try {
-        let tables = await this.getTablesAndKeys({}, {}, 0, true, false);
-        let f = [];
-
-        if (tables.qtr.length == 0) {
-          return f;
-        } else {
-          for (let table of tables.qtr) {
-            for (let field of table.qFields) {
-              f.push({
-                table: table.qName,
-                field: field.qName
-              });
-            }
-          }
-
-          return f;
-        }
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    async function mGetTables() {
-      try {
-        let qTables = await this.getTablesAndKeys({}, {}, 0, true, false);
-        let tables = [];
-
-        if (qTables.length == 0) {
-          return tables;
-        } else {
-          for (let table of qTables.qtr) {
-            tables.push(table.qName);
-          }
-
-          return tables;
-        }
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    async function mGetFields() {
-      try {
-        let qTables = await this.getTablesAndKeys({}, {}, 0, true, false);
-        let fields = [];
-
-        for (let table of qTables.qtr) {
-          for (let field of table.qFields) {
-            fields.push(field.qName);
-          }
-        }
-
-        return fields;
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    async function mGetListbox(fieldName) {
-      try {
-        let lbDef = objectDefinitions.listBox;
-        lbDef.field.qListObjectDef.qDef.qFieldDefs.push(fieldName);
-        let sessionObj = await this.createSessionObject(lbDef);
-        let fieldValues = await sessionObj.getLayout();
-        return fieldValues.field.qListObject;
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    }
-
-    var qTablesAndFields = {
-      mGetTablesAndFields,
-      mGetTables,
-      mGetFields,
-      mGetListbox
-    };
-
-    const nonExtensionObjects = ["barchart", "bookmark", "combochart", "dimension", "embeddedsnapshot", "filterpane", "gauge", "kpi", "linechart", "listbox", "LoadModel", "map", "masterobject", "measure", "piechart", "pivot-table", "scatterplot", "sheet", "slide", "slideitem", "snapshot", "story", "StringExpression", "table", "treemap"];
-
-    async function mGetAllExtensionObjects() {
-      let allInfos = await this.getAllInfos();
-      let extensionObjects = await filterOnlyExtensionObjects(this, allInfos);
-      return extensionObjects;
-    }
-
-    async function filterOnlyExtensionObjects(qDoc, allObjects) {
-      let possibleExtensionObjects = allObjects.filter(function (o) {
-        return nonExtensionObjects.indexOf(o.qType) == -1;
-      });
-      let realExtensionObjects = [];
-
-      if (possibleExtensionObjects.length > 0) {
-        for (let extObj of possibleExtensionObjects) {
-          let isReallyExtension = await realExtensionCheck(qDoc, extObj.qId);
-
-          if (isReallyExtension.isExtension) {
-            realExtensionObjects.push({
-              appName: qDoc.id,
-              objId: isReallyExtension.qObjProps.qInfo.qId,
-              objType: isReallyExtension.qObjProps.qInfo.qType,
-              extName: isReallyExtension.qObjProps.extensionMeta.name,
-              extVersion: isReallyExtension.qObjProps.version,
-              extVisible: isReallyExtension.qObjProps.extensionMeta.visible,
-              extIsBundle: !isReallyExtension.qObjProps.extensionMeta.isThirdParty,
-              extIsLibrary: isReallyExtension.qObjProps.extensionMeta.isLibraryItem,
-              qProps: isReallyExtension.qObjProps
-            });
-          }
-        }
-
-        return realExtensionObjects;
-      } else {
-        return [];
-      }
-    }
-
-    const realExtensionCheck = async function (qDoc, objId) {
-      let isExtension = false;
-      let qObjProps = {};
-
-      try {
-        let qObj = await qDoc.getObject(objId);
-        qObjProps = await qObj.getProperties();
-
-        if (qObjProps.extensionMeta) {
-          isExtension = true;
-        }
-      } catch (e) {
-        throw new Error(e.message);
-      }
-
-      return {
-        qObjProps,
-        isExtension
-      };
-    };
-
-    var extensionObjects = {
-      mGetAllExtensionObjects
     };
 
     const handlePromise = promise => {
@@ -343,6 +65,263 @@
 
     const {
       handlePromise: handlePromise$1
+    } = helpers;
+
+    async function mVariableGetAll(showSession = false, showConfig = false, showReserved = false) {
+      let objProp = objectDefinitions.variableList;
+      objProp.qShowSession = showSession;
+      objProp.qShowConfig = showConfig;
+      objProp.qShowReserved = showReserved;
+      let [sessionObj, sessionObjError] = await handlePromise$1(this.createSessionObject(objProp));
+      if (sessionObjError) throw new Error(sessionObjError.message);
+      let [layout, layoutError] = await handlePromise$1(sessionObj.getLayout());
+      if (layoutError) throw new Error(layoutError.message);
+      return layout.qVariableList.qItems;
+    }
+
+    async function mVariableUpdateById(id, definition, comment = undefined) {
+      let [variable, variableError] = await handlePromise$1(this.getVariableById(id));
+      if (variableError) throw new Error(variableError.message);
+      let [variableProps, variablePropsError] = await handlePromise$1(variable.getProperties());
+      if (variablePropsError) throw new Error(variablePropsError.message);
+      variableProps.qDefinition = definition;
+      if (comment) variableProps.qComment = comment;
+      let [setProps, setPropsError] = await handlePromise$1(variable.setProperties(variableProps));
+      if (setPropsError) throw new Error(setPropsError.message);
+      let [newProps, newPropsError] = await handlePromise$1(variable.getProperties());
+      if (newPropsError) throw new Error(newPropsError.message);
+      return newProps;
+    }
+
+    async function mVariableUpdateByName(name, definition, comment = undefined) {
+      let [variable, variableError] = await handlePromise$1(this.getVariableByName(name));
+      if (variableError) throw new Error(variableError.message);
+      let [variableProps, variablePropsError] = await handlePromise$1(variable.getProperties());
+      if (variablePropsError) throw new Error(variablePropsError.message);
+      variableProps.qDefinition = definition;
+      if (comment) variableProps.qComment = comment;
+      let [setProps, setPropsError] = await handlePromise$1(variable.setProperties(variableProps));
+      if (setPropsError) throw new Error(setPropsError.message);
+      let [newProps, newPropsError] = await handlePromise$1(variable.getProperties());
+      if (newPropsError) throw new Error(newPropsError.message);
+      return newProps;
+    }
+
+    async function mVariableCreate(name = '', definition = '', comment = '') {
+      let varProps = {
+        "qInfo": {
+          "qType": "variable"
+        },
+        "qName": name,
+        "qDefinition": definition,
+        "qComment": comment
+      };
+      let [created, createdError] = await handlePromise$1(this.createVariableEx(varProps));
+      if (createdError) throw new Error(createdError.message);
+      let [props, propsError] = await handlePromise$1(created.getProperties());
+      if (propsError) throw new Error(propsError.message);
+      return props;
+    }
+
+    var qVariables = {
+      mVariableGetAll,
+      mVariableUpdateById,
+      mVariableUpdateByName,
+      mVariableCreate
+    };
+
+    const {
+      handlePromise: handlePromise$2
+    } = helpers;
+
+    async function iGetSelectionsNative(qDoc) {
+      let [sessionObj, sessionObjError] = await handlePromise$2(qDoc.createSessionObject(objectDefinitions.sessionList));
+      if (sessionObjError) throw new Error(sessionObjError.message);
+      let [selections, selectionsError] = await handlePromise$2(sessionObj.getLayout());
+      if (selectionsError) throw new Error(selectionsError.message);
+      let [destroy, destroyError] = await handlePromise$2(qDoc.destroySessionObject(sessionObj.id));
+      if (destroyError) throw new Error(destroyError.message);
+      return selections;
+    }
+
+    async function mSelectionsAll() {
+      let [selections, error] = await handlePromise$2(iGetSelectionsNative(this));
+      if (error) throw new Error(error.message);
+      return selections.qSelectionObject;
+    }
+
+    async function mSelectionsFields() {
+      let [selections, error] = await handlePromise$2(iGetSelectionsNative(this));
+      if (error) throw new Error(error.message);
+      let fieldsSelected = selections.qSelectionObject.qSelections.map(function (s) {
+        return s.qField;
+      });
+      return fieldsSelected;
+    }
+
+    async function mSelectionsSimple(groupByField = false) {
+      let [selections, error] = await handlePromise$2(iGetSelectionsNative(this));
+      if (error) throw new Error(error.message);
+      if (!groupByField) return selections.qSelectionObject.qSelections.map(function (s) {
+        return s.qSelectedFieldSelectionInfo.map(function (f) {
+          return {
+            field: s.qField,
+            value: f.qName
+          };
+        });
+      }).flat();
+      return selections.qSelectionObject.qSelections.map(function (s) {
+        let values = s.qSelectedFieldSelectionInfo.map(function (f) {
+          return f.qName;
+        });
+        return {
+          field: s.qField,
+          values
+        };
+      });
+    }
+
+    async function mSelectInField(fieldName, values, toggle = false) {
+      let lbDef = objectDefinitions.listBox;
+      lbDef.field.qListObjectDef.qDef.qFieldDefs = [fieldName];
+      lbDef.qInfo.qType = "session-listbox";
+      let [sessionObj, sessionObjErr] = await handlePromise$2(this.createSessionObject(lbDef));
+      if (sessionObjErr) throw new Error(sessionObjErr.message);
+      let [layout, layoutError] = await handlePromise$2(sessionObj.getLayout());
+      if (layoutError) throw new Error(layoutError.message);
+      let index = layout.field.qListObject.qDataPages[0].qMatrix.filter(function (m) {
+        return values.indexOf(m[0].qText) > -1;
+      }).map(function (e) {
+        return e[0].qElemNumber;
+      });
+      let [selection, selectionError] = await handlePromise$2(sessionObj.selectListObjectValues('/field/qListObjectDef', index, toggle));
+      if (selectionError) throw new Error(selectionError.message);
+      let [destroy, destroyError] = await handlePromise$2(this.destroySessionObject(sessionObj.id));
+      if (destroyError) throw new Error(destroyError.message);
+      return selection;
+    }
+
+    var qSelections = {
+      mSelectionsAll,
+      mSelectionsFields,
+      mSelectionsSimple,
+      mSelectInField
+    };
+
+    const {
+      handlePromise: handlePromise$3
+    } = helpers;
+
+    async function mGetTablesAndFields() {
+      let [tables, error] = await handlePromise$3(this.getTablesAndKeys({}, {}, 0, true, false));
+      if (error) throw new Error(error.message);
+      return tables.qtr.map(function (t) {
+        return t.qFields.map(function (f) {
+          return {
+            table: t.qName,
+            field: f.qName
+          };
+        });
+      }).flat();
+    }
+
+    async function mGetTables() {
+      let [qTables, qTablesError] = await handlePromise$3(this.getTablesAndKeys({}, {}, 0, true, false));
+      if (qTablesError) throw new Error(qTablesError.message);
+      return qTables.qtr.map(t => t.qName);
+    }
+
+    async function mGetFields() {
+      let [qTables, qTablesError] = await handlePromise$3(this.getTablesAndKeys({}, {}, 0, true, false));
+      if (qTablesError) throw new Error(qTablesError.message);
+      return qTables.qtr.map(function (t) {
+        return t.qFields.map(function (f) {
+          return f.qName;
+        });
+      }).flat();
+    }
+
+    async function mCreateSessionListbox(fieldName, type = "session-listbox") {
+      let lbDef = objectDefinitions.listBox;
+      lbDef.field.qListObjectDef.qDef.qFieldDefs = [fieldName];
+      lbDef.qInfo.qType = type;
+      let [sessionObj, sessionObjErr] = await handlePromise$3(this.createSessionObject(lbDef));
+      if (sessionObjErr) throw new Error(sessionObjErr.message);
+      let [layout, layoutError] = await handlePromise$3(sessionObj.getLayout());
+      if (layoutError) throw new Error(layoutError.message);
+      return {
+        sessionObj,
+        layout
+      };
+    }
+
+    var qTablesAndFields = {
+      mGetTablesAndFields,
+      mGetTables,
+      mGetFields,
+      mCreateSessionListbox
+    };
+
+    const {
+      handlePromise: handlePromise$4
+    } = helpers;
+
+    async function mExtensionObjectsAll() {
+      let [allInfos, error] = await handlePromise$4(this.getAllInfos());
+      if (error) throw new Error(error.message);
+      return await filterOnlyExtensionObjects(this, allInfos);
+    }
+
+    async function filterOnlyExtensionObjects(qDoc, allObjects) {
+      return await Promise.all(allObjects.map(async function (extObj) {
+        let isReallyExtension = await realExtensionCheck(qDoc, extObj.qId);
+
+        if (isReallyExtension.isExtension) {
+          return {
+            appName: qDoc.id,
+            objId: isReallyExtension.qObjProps.qInfo.qId,
+            objType: isReallyExtension.qObjProps.qInfo.qType,
+            extName: isReallyExtension.qObjProps.extensionMeta.name,
+            extVersion: isReallyExtension.qObjProps.version,
+            extVisible: isReallyExtension.qObjProps.extensionMeta.visible,
+            extIsBundle: !isReallyExtension.qObjProps.extensionMeta.isThirdParty,
+            extIsLibrary: isReallyExtension.qObjProps.extensionMeta.isLibraryItem,
+            qProps: isReallyExtension.qObjProps
+          };
+        }
+      })).then(function (o) {
+        // make sure we filter out all object which are not 
+        // native object but are not extensions as well 
+        return o.filter(function (a) {
+          return a != undefined;
+        });
+      });
+    }
+
+    const realExtensionCheck = async function (qDoc, objId) {
+      let nativeObjectTypes = ["barchart", "boxplot", "combochart", "distributionplot", "gauge", "histogram", "kpi", "linechart", "piechart", "pivot-table", "scatterplot", "table", "treemap", "extension", "map", "listbox", "filterpane", "title", "paragraph"];
+      let [qObj, qObjError] = await handlePromise$4(qDoc.getObject(objId));
+      if (qObjError) return {
+        isExtension: false
+      };
+      let [qObjProps, qObjPropsError] = await handlePromise$4(qObj.getProperties());
+      if (qObjPropsError) throw new Error(qObjPropsError.message);
+      if (!qObjProps.visualization) return {
+        isExtension: false
+      };
+      let isNative = nativeObjectTypes.indexOf(qObjProps.visualization);
+      return {
+        qObjProps,
+        isExtension: isNative == -1 && qObjProps.extensionMeta ? true : false
+      };
+    };
+
+    var extensionObjects = {
+      mExtensionObjectsAll
+    };
+
+    const {
+      handlePromise: handlePromise$5
     } = helpers;
 
     async function mUnbuild() {
@@ -362,29 +341,29 @@
       objProp.qShowSession = false;
       objProp.qShowConfig = false;
       objProp.qShowReserved = false;
-      let [sessionObj, sessionObjErr] = await handlePromise$1(app.createSessionObject(objProp));
+      let [sessionObj, sessionObjErr] = await handlePromise$5(app.createSessionObject(objProp));
       if (sessionObjErr) throw new Error('unbuild variables: cannot create session object');
-      let [sessionObjLayout, sessionObjLayoutErr] = await handlePromise$1(sessionObj.getLayout());
+      let [sessionObjLayout, sessionObjLayoutErr] = await handlePromise$5(sessionObj.getLayout());
       if (sessionObjLayoutErr) throw new Error('unbuild variables: cannot get session object layout');
-      let [delSessionObj, delSessionObjErr] = await handlePromise$1(app.destroySessionObject(sessionObj.id));
+      let [delSessionObj, delSessionObjErr] = await handlePromise$5(app.destroySessionObject(sessionObj.id));
       if (delSessionObjErr) throw new Error('unbuild variables: cannot delete session object');
       return sessionObjLayout.qVariableList.qItems;
     }
 
     async function unbuildScript(app) {
-      let [script, scriptErr] = await handlePromise$1(app.getScript());
+      let [script, scriptErr] = await handlePromise$5(app.getScript());
       if (scriptErr) throw new Error('unbuild script: cannot fetch script');
       return script;
     }
 
     async function unbuildAppProperties(app) {
-      let [appProperties, appPropertiesError] = await handlePromise$1(app.getAppProperties());
+      let [appProperties, appPropertiesError] = await handlePromise$5(app.getAppProperties());
       if (appPropertiesError) throw new Error('unbuild app properties: cannot fetch app properties');
       return appProperties;
     }
 
     async function unbuildConnections(app) {
-      let [appConnections, appConnectionsErr] = await handlePromise$1(app.getConnections());
+      let [appConnections, appConnectionsErr] = await handlePromise$5(app.getConnections());
       if (appConnectionsErr) throw new Error('unbuild connections: cannot fetch app connections');
       return appConnections;
     }
@@ -396,21 +375,21 @@
         objects: []
       };
 
-      let [appAllInfos, appAllInfosErr] = await handlePromise$1(app.getAllInfos());
+      let [appAllInfos, appAllInfosErr] = await handlePromise$5(app.getAllInfos());
       if (appAllInfosErr) throw new Error('unbuild app infos: cannot fetch all app infos');
       return Promise.all(appAllInfos.map(async function (item) {
         if (item.qType == 'dimension') {
-          let [dim, dimErr] = await handlePromise$1(app.getDimension(item.qId));
+          let [dim, dimErr] = await handlePromise$5(app.getDimension(item.qId));
           if (dimErr) throw new Error('unbuild dimension: cannot fetch dimension');
-          let [dimProp, dimPropErr] = await handlePromise$1(dim.getProperties());
+          let [dimProp, dimPropErr] = await handlePromise$5(dim.getProperties());
           if (dimPropErr) throw new Error('unbuild dimension: cannot fetch dimension properties');
           data.dimensions.push(dimProp);
         }
 
         if (item.qType == 'measure') {
-          let [measure, measureErr] = await handlePromise$1(app.getMeasure(item.qId));
+          let [measure, measureErr] = await handlePromise$5(app.getMeasure(item.qId));
           if (measureErr) throw new Error('unbuild dimension: cannot fetch measure');
-          let [measureProp, measurePropErr] = await handlePromise$1(measure.getProperties());
+          let [measureProp, measurePropErr] = await handlePromise$5(measure.getProperties());
           if (measurePropErr) throw new Error('unbuild dimension: cannot fetch measure properties');
           data.measures.push(measureProp);
         }
@@ -424,22 +403,22 @@
     }
 
     async function processObject(item, app) {
-      let [obj, objErr] = await handlePromise$1(app.getObject(item.qId)); // embeddedsnapshot, snapshot, hiddenbookmark, story --> need to be handled differently
+      let [obj, objErr] = await handlePromise$5(app.getObject(item.qId)); // embeddedsnapshot, snapshot, hiddenbookmark, story --> need to be handled differently
 
       if (objErr) return { ...item,
         error: true
       };
-      let [parent, parentErr] = await handlePromise$1(obj.getParent());
-      let [children, childrenErr] = await obj.getChildInfos();
-      if (childrenErr) throw new Error('unbuild entity: cannot fetch entity children'); // parent-less objects - masterobject, sheet, appprops, LoadModel
+      let [parent, parentErr] = await handlePromise$5(obj.getParent());
+      let [children, childrenErr] = await handlePromise$5(obj.getChildInfos());
+      if (childrenErr) throw new Error(`unbuild entity: cannot fetch entity children`); // parent-less objects - masterobject, sheet, appprops, LoadModel
 
       if (parentErr && children.length > 0) {
-        let [propTree, propTreeErr] = await handlePromise$1(obj.getFullPropertyTree());
+        let [propTree, propTreeErr] = await handlePromise$5(obj.getFullPropertyTree());
         if (propTreeErr) throw new Error('unbuild entity: cannot fetch entity full property tree');
         return propTree;
       }
 
-      let [prop, propErr] = await handlePromise$1(obj.getProperties());
+      let [prop, propErr] = await handlePromise$5(obj.getProperties());
       if (propErr) throw new Error('unbuild entity: cannot fetch entity properties');
       return prop;
     }
@@ -449,7 +428,7 @@
     };
 
     const {
-      handlePromise: handlePromise$2
+      handlePromise: handlePromise$6
     } = helpers;
 
     async function mBuild({
@@ -461,7 +440,7 @@
       dimensions = [],
       objects = []
     }) {
-      let [appConnections, error] = await handlePromise$2(this.getConnections());
+      let [appConnections, error] = await handlePromise$6(this.getConnections());
       if (error) throw new Error('build: cannot get app connections');
       return Promise.all([await processMeasures(measures, this), await processDimensions(dimensions, this), await processVariables(variables, this), await processScript(script, this), await processAppProperties(appProperties, this), await processConnections(appConnections, connections, this), await processObjects(objects, this)]).then(function (d) {
         return {
@@ -478,10 +457,10 @@
 
     async function processMeasures(measures, app) {
       return Promise.all(measures.map(async function (measure) {
-        let [obj, objErr] = await handlePromise$2(app.getMeasure(measure.qInfo.qId)); // the measure do not exists and need to be created
+        let [obj, objErr] = await handlePromise$6(app.getMeasure(measure.qInfo.qId)); // the measure do not exists and need to be created
 
         if (objErr) {
-          let [created, error] = await handlePromise$2(app.createMeasure(measure));
+          let [created, error] = await handlePromise$6(app.createMeasure(measure));
           if (error) throw new Error(`build measure: cannot create measure "${measure.qInfo.qId}": ${error.message}`);
           return {
             qId: measure.qInfo.qId,
@@ -490,7 +469,7 @@
         } // the measure exists and need to be updated
 
 
-        let [updated, error] = await handlePromise$2(obj.setProperties(measure));
+        let [updated, error] = await handlePromise$6(obj.setProperties(measure));
         if (error) throw new Error(`build measure: cannot update measure "${measure.qInfo.qId}": ${error.message}`);
         return {
           qId: measure.qInfo.qId,
@@ -501,10 +480,10 @@
 
     async function processDimensions(dimensions, app) {
       return Promise.all(dimensions.map(async function (dimension) {
-        let [obj, objErr] = await handlePromise$2(app.getDimension(dimension.qInfo.qId)); // the dimension do not exists and need to be created
+        let [obj, objErr] = await handlePromise$6(app.getDimension(dimension.qInfo.qId)); // the dimension do not exists and need to be created
 
         if (objErr) {
-          let [created, error] = await handlePromise$2(app.createDimension(dimension));
+          let [created, error] = await handlePromise$6(app.createDimension(dimension));
           if (error) throw new Error(`build dimension: cannot create dimension "${dimension.qInfo.qId}": ${error.message}`);
           return {
             qId: dimension.qInfo.qId,
@@ -513,7 +492,7 @@
         } // the dimension exists and need to be updated
 
 
-        let [updated, error] = await handlePromise$2(obj.setProperties(measure));
+        let [updated, error] = await handlePromise$6(obj.setProperties(measure));
         if (error) throw new Error(`build dimension: cannot update dimension "${dimension.qInfo.qId}": ${error.message}`);
         return {
           qId: dimension.qInfo.qId,
@@ -523,7 +502,7 @@
     }
 
     async function processScript(script, app) {
-      let [s, error] = await handlePromise$2(app.setScript(script));
+      let [s, error] = await handlePromise$6(app.setScript(script));
       if (error) throw new Error(`build script: cannot set script: ${error.message}`);
       return {
         status: 'Set'
@@ -531,7 +510,7 @@
     }
 
     async function processAppProperties(appProperties, app) {
-      let [update, error] = await handlePromise$2(app.setAppProperties(appProperties));
+      let [update, error] = await handlePromise$6(app.setAppProperties(appProperties));
       if (error) throw new Error(`build app properties: cannot set app properties: ${error.message}`);
       return {
         status: 'Set'
@@ -540,10 +519,10 @@
 
     async function processVariables(variables, app) {
       return Promise.all(variables.map(async function (variable) {
-        let [qVar, qVarError] = await handlePromise$2(app.getVariableByName(variable.qName));
+        let [qVar, qVarError] = await handlePromise$6(app.getVariableByName(variable.qName));
 
         if (qVarError) {
-          let [created, error] = await handlePromise$2(app.createVariableEx(variable));
+          let [created, error] = await handlePromise$6(app.createVariableEx(variable));
           if (error) throw new Error(`build variable: cannot create variable "${variable.qName}": ${error.message}`);
           return {
             qId: variable.qName,
@@ -551,7 +530,7 @@
           };
         }
 
-        let [updated, error] = await handlePromise$2(qVar.setProperties(variable));
+        let [updated, error] = await handlePromise$6(qVar.setProperties(variable));
         if (error) throw new Error(`build variable: cannot update variable "${variable.qName}": ${error.message}`);
         return {
           qId: variable.qName,
@@ -565,7 +544,7 @@
         let conn = appConnections.find(o => o.qName === connection.qName);
 
         if (!conn) {
-          let [create, error] = await handlePromise$2(app.createConnection(connection));
+          let [create, error] = await handlePromise$6(app.createConnection(connection));
           if (error) throw new Error(`build connection: cannot create connection "${connection.qName}": ${error.message}`);
           return {
             qId: connection.qName,
@@ -573,7 +552,7 @@
           };
         }
 
-        let [modify, error] = await handlePromise$2(app.modifyConnection(conn.qId, connection, true));
+        let [modify, error] = await handlePromise$6(app.modifyConnection(conn.qId, connection, true));
         if (error) throw new Error(`build connection: cannot modify connection "${connection.qName}": ${error.message}`);
         return {
           qId: connection.qName,
@@ -596,12 +575,12 @@
           objType = object.qInfo.qType;
         }
 
-        let [obj, objError] = await handlePromise$2(app.getObject(objId));
+        let [obj, objError] = await handlePromise$6(app.getObject(objId));
 
         if (!objError) {
           // if its GenericObject we have to set the the props using setFullPropertyTree
           if (isGenericObject) {
-            let [updated, error] = await handlePromise$2(obj.setFullPropertyTree(object));
+            let [updated, error] = await handlePromise$6(obj.setFullPropertyTree(object));
             if (error) throw new Error(`build object: cannot update object "${objId}": ${error.message}`);
             return {
               qId: objId,
@@ -611,7 +590,7 @@
 
 
           if (!isGenericObject) {
-            let [updated, error] = await handlePromise$2(obj.setProperties(object));
+            let [updated, error] = await handlePromise$6(obj.setProperties(object));
             if (error) throw new Error(`build object: cannot update object "${objId}": ${error.message}`);
             return {
               qId: objId,
@@ -623,14 +602,14 @@
 
         if (objError) {
           if (isGenericObject) {
-            let [o, oError] = await handlePromise$2(app.createObject({
+            let [o, oError] = await handlePromise$6(app.createObject({
               qInfo: {
                 qId: `${objId}`,
                 qType: objType
               }
             }));
             if (oError) throw new Error(`build object: cannot create object "${objId}": ${oError.message}`);
-            let [updated, updatedError] = await handlePromise$2(o.setFullPropertyTree(object));
+            let [updated, updatedError] = await handlePromise$6(o.setFullPropertyTree(object));
             if (updatedError) throw new Error(`build object: cannot update object "${objId}": ${updatedError.message}`);
             return {
               qId: objId,
@@ -639,7 +618,7 @@
           }
 
           if (!isGenericObject) {
-            let [created, createdError] = await handlePromise$2(app.createObject(object));
+            let [created, createdError] = await handlePromise$6(app.createObject(object));
             if (createdError) throw new Error(`build object: cannot create object: "${objId}": ${createdError.message}`);
             return {
               qId: objId,
@@ -681,5 +660,5 @@
 
     return main;
 
-}));
+})));
 //# sourceMappingURL=enigma-mixin.js.map

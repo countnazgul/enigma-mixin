@@ -108,6 +108,7 @@ The available `mixin` are "grouped" in the following categories:
   - no parameters
 - `mCreateSessionListbox` - creates a **session** listbox object for the specified field
   - fieldName
+  - type - (`optional`; default `session-listbox`) - type of the listbox
 
 ### Variables
 

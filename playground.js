@@ -54,9 +54,9 @@ if (process.env.QS_PORT == "4848") {
   // let t = await qDoc.mUnbuildScript()
   // let t = await qDoc.mAppProperties()
   // let t = await qDoc.mConnections()
-  // let unbuild = await qDoc.mUnbuild().catch(function (e) {
-  //   let b = 1
-  // })
+  let unbuild = await qDoc.mUnbuild().catch(function (e) {
+    let b = 1
+  })
   // fs.writeFileSync('./unbuild.json', JSON.stringify(unbuild, null, 4))
   // let data = JSON.parse(fs.readFileSync('./unbuild.json'))
   // let build = await qDoc.mBuild(data).catch(function (e) {
@@ -94,17 +94,23 @@ if (process.env.QS_PORT == "4848") {
   //   })
 
 
-  // let extensions = await qDoc.mSelectionsGetAll().catch(function (e) {
+  // let extensions = await qDoc.mSelectionsAll().catch(function (e) {
   //   let c = 1
   // })
 
-  // let extensions2 = await qDoc.mSelectionsGetSimple().catch(function (e) {
+  // let extensions = await qDoc.mSelectionsFields().catch(function (e) {
   //   let c = 1
   // })
 
-  let variablesAll = await qDoc.mVariableGetAll().catch(function (e) {
-    let c = 1
-  })
+
+
+  // let extensions2 = await qDoc.mSelectionsSimple().catch(function (e) {
+  //   let c = 1
+  // })
+
+  // let variablesAll = await qDoc.mVariableGetAll().catch(function (e) {
+  //   let c = 1
+  // })
 
   // let variableUpdate = await qDoc.mVariableUpdateById('ddfa82ca-e199-4baf-b1f5-7f8313ae6cbc', '=sum(test)').catch(function (e) {
   //   let c = 1
@@ -114,18 +120,23 @@ if (process.env.QS_PORT == "4848") {
   //   let c = 1
   // })
 
-  let variableCreate = await qDoc.mVariableCreate('vLanguage1', '=sum(test)').catch(function (e) {
-    let c = 1
-  })  
+  // let variableCreate = await qDoc.mVariableCreate('vLanguage1', '=sum(test)').catch(function (e) {
+  //   let c = 1
+  // })  
 
 
   // let extensions = await qDoc.mGetSelectionsCurr().catch(function (e) {
   //   let c = 1
   // })
 
+  // let tables = await qDoc.mGetTables().catch(function (e) {
+  //   let c = 1
+  // })
 
 
-  // let b = await qDoc.mGetListbox('Month')
+
+
+  // let b = await qDoc.mCreateSessionListbox('Product Sub Group Desc')
 
   // await qDoc.doSave()
   let a = 1;
