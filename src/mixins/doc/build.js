@@ -33,7 +33,6 @@ async function mBuild({
     })
 }
 
-
 async function processMeasures(measures, app) {
     return Promise.all(measures.map(async function (measure) {
         let [obj, objErr] = await handlePromise(app.getMeasure(measure.qInfo.qId))

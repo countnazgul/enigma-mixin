@@ -1,18 +1,13 @@
 const enigma = require('enigma.js');
 const WebSocket = require('ws');
 const schema = require('enigma.js/schemas/12.20.0.json');
-// const docMixin = require('../src/main.js');
-const docMixin = require('../dist/enigma-mixin.min.js');
+// const docMixin = require('../dist/enigma-mixin.min.js');
+const docMixin = require('../src/main.js');
 
-const OS = require('os')
-const OSUser = OS.userInfo().username;
-
-// const testDoc = `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Executive Dashboard.qvf`
 let docConf = {
-  testDoc: `C:\\Users\\${OSUser}\\Documents\\Qlik\\Sense\\Apps\\Executive Dashboard.qvf`,
+  testDoc: `/data/Executive Dashboard(1).qvf`,
   table: 'ProductGroupMaster',
   field: 'Product Group Desc',
-  values: ['Baked Goods'],
   otherField: 'Account'
 }
 
@@ -32,7 +27,7 @@ beforeAll(async function () {
       await qlikConnect.session.close()
     }
   } catch (e) {
-    console.log("Unable to connecto to Qlik Sense")
+    console.log("Unable to connect to to Qlik Sense")
     process.exit(1)
   }
 });
@@ -51,8 +46,8 @@ afterEach(async function () {
 async function connect() {
   let session = enigma.create({
     schema,
-    mixins: [docMixin],
-    url: 'ws://localhost:4848/app/engineData',
+    mixins: docMixin,
+    url: 'ws://localhost:9076/app/engineData',
     createSocket: url => new WebSocket(url),
   });
 
@@ -61,38 +56,47 @@ async function connect() {
   return ({ session, global })
 }
 
-describe('initialization', async function () {
+describe('initialization', () => {
   it('qlik session should have mixins', async function () {
-    let a = qSession.config.mixins.length
-    expect(a).toBe(1);
+    expect(qSession.config.mixins.length).toBe(1);
   });
 
   it('mixins to be for Qlik Document', async function () {
-    let a = qSession.config.mixins[0].types[0]
-    expect(a).toBe('Doc');
+    expect(qSession.config.mixins[0].types[0]).toBe('Doc');
   });
 });
 
-describe('Selections', async function () {
+
+describe('Selections', () => {
   it('Selecting value in field to be ok', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
-    let a1 = await qDoc.mSelectInField({ fieldName: docConf.field, values: docConf.values })
+    let select = await qDoc.mSelectInField(
+      'Product Sub Group Desc',
+      ['Cheese', 'Ice Cream', 'Juice', 'Chips'],
+      false).catch((e) => e.message)
 
-    expect(a1).toBeTruthy
+    expect(select).toBeTruthy
   });
 
-  it('Check if selected values are correct', async function () {
+  it('Selected values are correct', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
-    let a1 = await qDoc.mSelectInField({ fieldName: docConf.field, values: docConf.values })
-    // let a2 = await qDoc.mGetCurrSelectionFields()
-    let a2 = await qDoc.mGetSelectionsCurrNative()
 
-    expect(a2.qSelectionObject.qSelections[0].qSelected).toBe(docConf.values[0])
+    let select = await qDoc.mSelectInField(
+      'Product Sub Group Desc',
+      ['Cheese', 'Ice Cream', 'Juice', 'Chips'],
+      false).catch((e) => e.message)
+
+    let fieldsSelections = await qDoc.mSelectionsFields()
+    let selectionsSimple = await qDoc.mSelectionsSimple()
+    let selectionsNative = await qDoc.mSelectionsAll()
+
+    expect(fieldsSelections[0]).toBe('Product Sub Group Desc')
+    expect(selectionsSimple.length).toBe(4)
+    expect(selectionsNative.qSelections.length).toBe(1)
   });
-
 });
 
-describe('Tables and fields', async function () {
+describe('Tables and fields', () => {
   it('Document to contain more than 1 table', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
     let tables = await qDoc.mGetTables()
@@ -125,58 +129,78 @@ describe('Tables and fields', async function () {
     expect(field.length).toBe(1)
   });
 
+  it('Correctly create listbox', async function () {
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+    let listbox = await qDoc.mCreateSessionListbox('Product Sub Group Desc')
+
+    expect(listbox.layout.qInfo.qType).toBe('session-listbox')
+  });
 });
 
-describe('Variables', async function () {
-  it('Create new variable', async function () {
-    let qDoc = await qGlobal.openDoc(docConf.testDoc)
-    let newVariable = {
-      name: 'Test Variable',
-      comment: 'Commenting Test Variable',
-      definition: 'sum(100)'
-    }
-
-    let createVariable = await qDoc.mCreateVariable(newVariable)
-    let allVariables = await qDoc.mGetVariablesAll()
-
-    let createdVariable = allVariables.filter(function (v) {
-      return v.qName == newVariable.name
-    })[0]
-
-    expect(createdVariable.qName).toBe(newVariable.name)
-  });
-
+describe('Variables', () => {
   it('Document to contain more than 1 variable', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
-    let allVariables = await qDoc.mGetVariablesAll()
+    let allVariables = await qDoc.mVariableGetAll()
 
     expect(allVariables.length).toBeGreaterThan(0)
   });
 
-  it('Update variable name', async function () {
+  it('Create new variable', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
-    let allVariables = await qDoc.mGetVariablesAll()
 
-    let toUpdate = allVariables[0]
-    toUpdate.qName = 'Test Update Variable'
+    let randomNumber = Math.floor(Math.random() * 10000)
 
-    let updateVariable = await qDoc.mUpdateVariable(toUpdate)
+    let createVariable = await qDoc.mVariableCreate(
+      `Test Variable Jest - ${randomNumber}`,
+      'sum(100)',
+      'Commenting Test Variable'
+    )
 
-    let updatedVariable = await qDoc.getVariableById(toUpdate.qInfo.qId)
-    let varProperties = await updatedVariable.getProperties()
-    expect(varProperties.qName).toBe('Test Update Variable')
+    let allVariables = await qDoc.mVariableGetAll()
+
+    let createdVariable = allVariables.filter(function (v) {
+      return v.qName == `Test Variable Jest - ${randomNumber}`
+    })[0]
+
+    expect(createVariable.qName).toBe(`Test Variable Jest - ${randomNumber}`)
+    expect(createdVariable.qName).toBe(`Test Variable Jest - ${randomNumber}`)
   });
 
+  it('Update variable by name', async function () {
+    let qDoc = await qGlobal.openDoc(docConf.testDoc)
+    let allVariables = await qDoc.mVariableGetAll()
 
+    let updateVariableName = await qDoc.mVariableUpdateByName(allVariables[0].qName, 'sum(test)')
+    let updateVariableId = await qDoc.mVariableUpdateById(allVariables[0].qInfo.qId, 'sum(test)')
+
+    expect(updateVariableName.qDefinition).toBe('sum(test)')
+    expect(updateVariableId.qDefinition).toBe('sum(test)')
+  });
 });
 
-describe('Extensions', async function () {
+describe('Extensions', () => {
   it('List all extensions in a document', async function () {
     let qDoc = await qGlobal.openDoc(docConf.testDoc)
 
-    let extensionObjects = await qDoc.mGetAllExtensionObjects()
+    let extensionObjects = await qDoc.mExtensionObjectsAll()
 
-    expect(extensionObjects.length).toBeGreaterThan(0)
+    expect(extensionObjects.length).toBe(4)
   });
-
 });
+
+// describe('Build/Unbuild', () => {
+//   it('Unbuild is ok', async function () {
+//     let qDoc = await qGlobal.openDoc(docConf.testDoc)
+
+//     let unbuild = await qDoc.mUnbuild()
+
+//     expect(unbuild).toBe(1)
+//     // expect(unbuild.appProperties.qTitle).toBe("Executive Dashboard(1)")
+//     // expect(unbuild.connections.length).toBe(0)
+//     // expect(unbuild.dimensions.length).toBe(21)
+//     // expect(unbuild.measures.length).toBe(33)
+//     // expect(unbuild.objects.length).toBe(66)
+//     // expect(unbuild.variables.length).toBe(22)
+//     // expect(unbuild.script.indexOf('///$tab Main')).toBeGreaterThan(-1)
+//   });
+// })

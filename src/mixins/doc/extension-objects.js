@@ -1,15 +1,13 @@
 const { handlePromise } = require('../../lib/helpers');
 
-async function mGetAllExtensionObjects() {
+async function mExtensionObjectsAll() {
     let [allInfos, error] = await handlePromise(this.getAllInfos())
     if (error) throw new Error(error.message)
 
     return await filterOnlyExtensionObjects(this, allInfos)
 }
 
-
-async function filterOnlyExtensionObjects(qDoc, allObjects) {
-    
+async function filterOnlyExtensionObjects(qDoc, allObjects) {    
     return await Promise.all(allObjects.map(async function (extObj) {
         let isReallyExtension = await realExtensionCheck(qDoc, extObj.qId)
 
@@ -70,5 +68,5 @@ const realExtensionCheck = async function (qDoc, objId) {
 }
 
 module.exports = {
-    mGetAllExtensionObjects
+    mExtensionObjectsAll
 }

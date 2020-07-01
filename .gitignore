@@ -3,3 +3,4 @@ node_modules/
 docs
 connect.js
 unbuild.json
+coverage/
