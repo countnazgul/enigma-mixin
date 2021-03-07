@@ -60,13 +60,13 @@ if (process.env.QS_PORT == "4848") {
   // })
 
   // let allBookmarks = await qDoc.mGetBookmarksMeta();
-  // let b = await qDoc.mGetBookmarkMeta("8a1480e4-5cb2-47d5-848b-ec8473cc0a05");
+  let b = await qDoc.mGetBookmarkMeta("8a1480e4-5cb2-47d5-848b-ec8473cc0a05");
   // let b1 = await qDoc.mCreateBookmarkFromMeta(b, "new bookmark");
   // let c = await qDoc.mGetBookmarksMeta();
 
-  let a2 = await qDoc.mGetBookmarkValues(
-    "8a1480e4-5cb2-47d5-848b-ec8473cc0a05"
-  );
+  // let a2 = await qDoc.mGetBookmarkValues(
+  //   "8a1480e4-5cb2-47d5-848b-ec8473cc0a05"
+  // );
   let a = 1;
 
   // let extensions1 = await qDoc.mSelectInFieldSimple({

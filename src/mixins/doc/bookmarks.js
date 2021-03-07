@@ -68,6 +68,18 @@ async function mGetBookmarkValues(bookmarkId, state = "$") {
   });
 }
 
+async function mCloneBookmark(
+  sourceBookmarkId,
+  state = "$",
+  title,
+  description = ""
+) {
+  if (!title) throw new Error("Bookmark title is required");
+
+  let sourceBookmarkMeta = await mGetBookmarkMeta(sourceBookmarkId, state);
+  return await mCreateBookmarkFromMeta(sourceBookmarkMeta, title, description);
+}
+
 function destructSetAnalysis(setAnalysisRaw) {
   // remove "<" and ">" from the start and the end of the string
   setAnalysisRaw = /\<(.*?)\>/g.exec(setAnalysisRaw)[1];
@@ -162,5 +174,6 @@ module.exports = {
   mGetBookmarkMeta,
   mGetBookmarksMeta,
   mCreateBookmarkFromMeta,
+  mCloneBookmark,
   mGetBookmarkValues,
 };
