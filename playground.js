@@ -1,55 +1,51 @@
-const OS = require('os');
-const fs = require('fs');
+const OS = require("os");
+const fs = require("fs");
 
-const enigma = require('enigma.js');
-const WebSocket = require('ws');
-const schema = require('enigma.js/schemas/12.612.0.json');
+const enigma = require("enigma.js");
+const WebSocket = require("ws");
+const schema = require("enigma.js/schemas/12.612.0.json");
+const {
+  mGetBookmarkMeta,
+  mGetBookmarkValues,
+} = require("./src/mixins/doc/bookmarks.js");
 
-var docMixin = {}
+var docMixin = {};
 if (process.env.release == "dev") {
-  docMixin = require('./src/main.js');
+  docMixin = require("./src/main.js");
 }
 
 if (process.env.release == "prod") {
-  docMixin = require('./dist/enigma-mixin.js');
+  docMixin = require("./dist/enigma-mixin.js");
 }
 
 if (process.env.release == "prod-min") {
-  docMixin = require('./dist/enigma-mixin.min.js');
+  docMixin = require("./dist/enigma-mixin.min.js");
 }
-
-
 
 // const qsHost = process.env.QS_HOST
 // const qsPort = process.env.QS_PORT
 // const qsDoc = process.env.QS_DOC
 // var qsDocPath = ""
 
-let qsDocPath = ""
-
+let qsDocPath = "";
 
 if (process.env.QS_PORT == "9076") {
   const OSUser = OS.userInfo().username;
-  qsDocPath = process.env.QS_DOC
+  qsDocPath = process.env.QS_DOC;
 }
-
 
 if (process.env.QS_PORT == "4848") {
   const OSUser = OS.userInfo().username;
-  qsDocPath = process.env.QS_DOC
+  qsDocPath = process.env.QS_DOC;
 }
 
-
-
-
-
 (async function () {
-  let qlikConnect = await connect()
-  qSession = qlikConnect.session
-  qGlobal = qlikConnect.global
+  let qlikConnect = await connect();
+  qSession = qlikConnect.session;
+  qGlobal = qlikConnect.global;
 
   // let t = await qGlobal.createDocEx('build-test')
-  let qDoc = await qGlobal.openDoc(qsDocPath)
+  let qDoc = await qGlobal.openDoc(qsDocPath);
   // let t = await qDoc.mUnbuildVariables({ showSession: true, showConfig: true, showReserved: true })
   // let t = await qDoc.mUnbuildScript()
   // let t = await qDoc.mAppProperties()
@@ -62,6 +58,16 @@ if (process.env.QS_PORT == "4848") {
   // let build = await qDoc.mBuild(data).catch(function (e) {
   //   let c = 1
   // })
+
+  // let allBookmarks = await qDoc.mGetBookmarksMeta();
+  // let b = await qDoc.mGetBookmarkMeta("8a1480e4-5cb2-47d5-848b-ec8473cc0a05");
+  // let b1 = await qDoc.mCreateBookmarkFromMeta(b, "new bookmark");
+  // let c = await qDoc.mGetBookmarksMeta();
+
+  let a2 = await qDoc.mGetBookmarkValues(
+    "8a1480e4-5cb2-47d5-848b-ec8473cc0a05"
+  );
+  let a = 1;
 
   // let extensions1 = await qDoc.mSelectInFieldSimple({
   //   fieldName: 'Month',
@@ -93,7 +99,6 @@ if (process.env.QS_PORT == "4848") {
   //     let c = 1
   //   })
 
-
   // let extensions = await qDoc.mSelectionsAll().catch(function (e) {
   //   let c = 1
   // })
@@ -101,8 +106,6 @@ if (process.env.QS_PORT == "4848") {
   // let extensions = await qDoc.mSelectionsFields().catch(function (e) {
   //   let c = 1
   // })
-
-
 
   // let extensions2 = await qDoc.mSelectionsSimple().catch(function (e) {
   //   let c = 1
@@ -122,8 +125,7 @@ if (process.env.QS_PORT == "4848") {
 
   // let variableCreate = await qDoc.mVariableCreate('vLanguage1', '=sum(test)').catch(function (e) {
   //   let c = 1
-  // })  
-
+  // })
 
   // let extensions = await qDoc.mGetSelectionsCurr().catch(function (e) {
   //   let c = 1
@@ -133,14 +135,11 @@ if (process.env.QS_PORT == "4848") {
   //   let c = 1
   // })
 
-
-
-
   // let b = await qDoc.mCreateSessionListbox('Product Sub Group Desc')
 
   // await qDoc.doSave()
-  let allExtensions = await qDoc.mExtensionObjectsAll()
-  let a = 1;
+  // let allExtensions = await qDoc.mExtensionObjectsAll()
+  // let a = 1;
 
   // let a = 1
 
@@ -154,7 +153,7 @@ if (process.env.QS_PORT == "4848") {
   // let t = 0
   // let a = await qDoc.mixin.qSelections.getCurrSelectionFields()
   // let a = await qDoc.mGetSelectionsCurr()
-  // let a = await qDoc.mGetSelectionsCurrNative() 
+  // let a = await qDoc.mGetSelectionsCurrNative()
   // let a = await qDoc.mixin.qTablesAndFields.getTables()
   // let a = await qDoc.mixin.qTablesAndFields.getFields()
   // let a = await qDoc.mixin.qTablesAndFields.getTablesAndFields()
@@ -173,8 +172,7 @@ if (process.env.QS_PORT == "4848") {
 
   // console.log(f)
 
-  await qSession.close()
-
+  await qSession.close();
 })();
 
 async function connect() {
@@ -182,13 +180,12 @@ async function connect() {
     schema,
     mixins: docMixin,
     url: `ws://${process.env.QS_HOST}:${process.env.QS_PORT}/app/engineData`,
-    createSocket: url => new WebSocket(url),
+    createSocket: (url) => new WebSocket(url),
   });
 
-  let global = await session.open()
+  let global = await session.open();
 
-  let a = 1
   // let a = await global.mGetAllExtensionObjects()
 
-  return ({ session, global })
+  return { session, global };
 }
