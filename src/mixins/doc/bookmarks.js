@@ -47,6 +47,10 @@ async function mCreateBookmarkFromMeta(bookmarkMeta, title, description = "") {
     })
   );
 
+  if (!makeSelections.every((v) => v === true)) {
+    throw new Error(`Failed to make selection`);
+  }
+
   let newBookmark = await this.createBookmark({
     qProp: {
       qInfo: {
@@ -91,22 +95,37 @@ function destructSetAnalysis(setAnalysisRaw) {
     // remove the "," character from the end (if exists)
     s = s.replace(/,\s*$/, "");
 
+    // get the value between { and }
     let regexValues = /\{(.*?)\}/;
     let valueRaw = `${regexValues.exec(s)[1]}`;
 
     let type;
     let values;
 
-    // if the value is expression - starts with `"=` and ends with double quote
-    let regexExpression = /\"=(.*?)\"/;
+    // option 1 (general case): if the value is expression (starts with `"` and ends with double quote)
+    let regexExpression = /\"(.*?)\"/;
+    // option 2: if the value is expression (starts with `"=` and ends with double quote)
+    let regexExpression1 = /\"=(.*?)\"/;
 
+    // if the value is expression
     if (regexExpression.test(valueRaw)) {
       type = "expression";
-      values = `=${regexExpression.exec(valueRaw)[1]}`;
-    } else {
+      //if starts with `"=` add "=" after the regex
+      // else keep it as it is
+      if (regexExpression1.test(valueRaw)) {
+        values = `=${regexExpression1.exec(valueRaw)[1]}`;
+      } else {
+        values = `${regexExpression.exec(valueRaw)[1]}`;
+      }
+    }
+
+    // if the value is list of values
+    if (!regexExpression.test(valueRaw)) {
       type = "list";
       let rawValues = JSON.parse(`[${valueRaw.replace(/'/g, '"')}]`);
 
+      // determine the value based on the type - string or number
+      // fields are different based on the value type
       values = rawValues.map((v) => {
         if (typeof v == "number")
           return {
@@ -122,6 +141,8 @@ function destructSetAnalysis(setAnalysisRaw) {
       });
     }
 
+    // extract the field from the expression
+    // first string before ={
     let regexField = /(.*?)\={/;
     let field = regexField.exec(s)[1];
 

@@ -61,7 +61,8 @@ if (process.env.QS_PORT == "4848") {
 
   // let allBookmarks = await qDoc.mGetBookmarksMeta();
   let b = await qDoc.mGetBookmarkMeta("8a1480e4-5cb2-47d5-848b-ec8473cc0a05");
-  // let b1 = await qDoc.mCreateBookmarkFromMeta(b, "new bookmark");
+  let b1 = await qDoc.mCreateBookmarkFromMeta(b, "new bookmark");
+  let b2 = await qDoc.mGetBookmarkMeta(b1);
   // let c = await qDoc.mGetBookmarksMeta();
 
   // let a2 = await qDoc.mGetBookmarkValues(
