@@ -46,6 +46,12 @@ if (process.env.QS_PORT == "4848") {
 
   // let t = await qGlobal.createDocEx('build-test')
   let qDoc = await qGlobal.openDoc(qsDocPath);
+  let applyBookmark = await qDoc.applyBookmark(
+    // "7a660b12-fb35-47e0-a50a-2af22c8199a4"
+    "f095c5e1-9645-4839-971e-f06092580875"
+  );
+
+  let a1 = await qDoc.mSelectionsAll();
   // let t = await qDoc.mUnbuildVariables({ showSession: true, showConfig: true, showReserved: true })
   // let t = await qDoc.mUnbuildScript()
   // let t = await qDoc.mAppProperties()
@@ -60,9 +66,9 @@ if (process.env.QS_PORT == "4848") {
   // })
 
   // let allBookmarks = await qDoc.mGetBookmarksMeta();
-  let b = await qDoc.mGetBookmarkMeta("8a1480e4-5cb2-47d5-848b-ec8473cc0a05");
-  let b1 = await qDoc.mCreateBookmarkFromMeta(b, "new bookmark");
-  let b2 = await qDoc.mGetBookmarkMeta(b1);
+  // let b = await qDoc.mGetBookmarkMeta("8a1480e4-5cb2-47d5-848b-ec8473cc0a05");
+  // let b1 = await qDoc.mCreateBookmarkFromMeta(b, "new bookmark");
+  // let b2 = await qDoc.mGetBookmarkMeta(b1);
   // let c = await qDoc.mGetBookmarksMeta();
 
   // let a2 = await qDoc.mGetBookmarkValues(

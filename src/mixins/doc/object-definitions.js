@@ -36,7 +36,7 @@ const listBox = {
         {
           qTop: 0,
           qLeft: 0,
-          qHeight: 10000,
+          qHeight: 10,
           qWidth: 1,
         },
       ],
