@@ -1,6 +1,6 @@
 {
   "name": "enigma-mixin",
-  "version": "0.1.1",
+  "version": "0.1.1-beta.0",
   "description": "Set of Qlik Sense enigma.js mixin",
   "author": {
     "email": "stefan.stoichev@gmail.com",
@@ -15,12 +15,10 @@
   "scripts": {
     "test": "jest",
     "build-test": "rollup --config",
-    "build": "rollup -c && cross-env NODE_ENV=production rollup -c",
-    "publish_local": "npm publish --registry http://192.168.0.10:4873"
+    "build": "rollup -c && cross-env NODE_ENV=production rollup -c"
   },
   "files": [
     "dist/*",
-    "src/*",
     "*.json",
     "*.md",
     "LICENSE"
