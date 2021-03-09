@@ -1,6 +1,9 @@
+dist/*
 node_modules
 node_modules/
 docs
 connect.js
 unbuild.json
 coverage/
+playground.js
+dist/
