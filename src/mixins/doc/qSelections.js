@@ -179,7 +179,7 @@ async function getFieldSelections(qDoc, qSelection) {
   let selectedValues = [...tempSelected];
   let qTop = lbDef.field.qListObjectDef.qInitialDataFetch[0].qHeight;
 
-  for (i = 1; i < totalDataPages; i++) {
+  for (let i = 1; i < totalDataPages; i++) {
     let dataPage = await lb.getListObjectData("/field/qListObjectDef", [
       {
         qTop: qTop,
