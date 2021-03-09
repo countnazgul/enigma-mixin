@@ -1,7 +1,7 @@
 const chai = require("chai");
 const expect = chai.expect;
 
-const { connectToQlik } = require("./functions");
+const { connectToQlik, docConf } = require("./functions");
 
 describe("Tables and fields", function () {
   this.timeout(30000);
@@ -29,5 +29,31 @@ describe("Tables and fields", function () {
 
     expect(tables.length).to.be.greaterThan(1) &&
       expect(tablesIndex).to.be.greaterThan(-1);
+  });
+
+  it("Document to contain more than 1 field", async function () {
+    let fields = await this.qlik.app.mGetFields();
+
+    let fieldIndex = fields.indexOf(docConf.otherField);
+
+    expect(fields.length).to.be.greaterThan(1);
+    expect(fieldIndex).to.be.greaterThan(-1);
+  });
+
+  it("Returns array of fields <-> tables", async function () {
+    let tablesAndFields = await this.qlik.app.mGetTablesAndFields();
+
+    let field = tablesAndFields.filter(function (f) {
+      return f.field == docConf.field && f.table == docConf.table;
+    });
+
+    expect(tablesAndFields.length).to.be.greaterThan(1);
+    expect(field.length).to.be.equal(1);
+  });
+
+  it("Correctly create listbox", async function () {
+    let listbox = await this.qlik.app.mCreateSessionListbox("Region Name");
+
+    expect(listbox.layout.qInfo.qType).to.be.equal("session-listbox");
   });
 });

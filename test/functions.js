@@ -19,6 +19,14 @@ const connectToQlik = async function () {
   return { session, global, app };
 };
 
+const docConf = {
+  table: "Customer Good Sales DataSalesDetails",
+  field: "Invoice Number",
+  otherField: "Region Name",
+  otherFieldValues: ["Western", "Central", "Southern"],
+};
+
 module.exports = {
   connectToQlik,
+  docConf,
 };
