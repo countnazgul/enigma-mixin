@@ -13,7 +13,7 @@
     "node": ">=8"
   },
   "scripts": {
-    "test": "mocha test/**/*.spec.js",
+    "test": "mocha --reporter ./node_modules/mocha-badge-generator",
     "build-test": "rollup --config",
     "build": "rollup -c && cross-env NODE_ENV=production rollup -c"
   },
@@ -36,8 +36,10 @@
     "chai": "^4.3.3",
     "cross-env": "^5.2.1",
     "enigma.js": "^2.7.2",
+    "es6-template-strings": "^2.0.1",
     "extend": "^3.0.2",
     "mocha": "^8.3.1",
+    "mocha-badge-generator": "^0.9.0",
     "nyc": "^15.1.0",
     "rollup": "^1.32.1",
     "rollup-plugin-babel": "^4.4.0",
