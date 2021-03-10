@@ -21,7 +21,11 @@ async function mGetBookmarkMeta(bookmarkId, state = "$", qApp = {}) {
   let [properties, layout, setAnalysisRaw] = await Promise.all([
     await bookmark.getProperties(),
     await bookmark.getLayout(),
-    await app.getSetAnalysis(state, bookmarkId),
+    await app.getSetAnalysis(state, bookmarkId).catch((e) => {
+      throw new Error(
+        `Code: ${e.code}; Message: ${e.message}; Details: ${e.parameter}`
+      );
+    }),
   ]);
 
   let setAnalysisDestructed = destructSetAnalysis(setAnalysisRaw);
@@ -34,16 +38,22 @@ async function mGetBookmarkMeta(bookmarkId, state = "$", qApp = {}) {
   };
 }
 
-async function mCreateBookmarkFromMeta(bookmarkMeta, title, description = "") {
+async function mCreateBookmarkFromMeta(
+  bookmarkMeta,
+  title,
+  description = "",
+  qApp = {}
+) {
   if (!title) throw new Error("Bookmark title is required");
+  let app = qApp.type && qApp.type == "Doc" ? qApp : this;
 
-  await this.clearAll({ qLockedAlso: true });
+  await app.clearAll({ qLockedAlso: true });
 
   let makeSelections = await Promise.all(
     bookmarkMeta.setAnalysisDestructed.map(async (s) => {
-      if (s.type == "list") return await selectListValues(this, s);
+      if (s.type == "list") return await selectListValues(app, s);
 
-      if (s.type == "expression") return await selectExpressionValues(this, s);
+      if (s.type == "expression") return await selectExpressionValues(app, s);
     })
   );
 
@@ -51,7 +61,7 @@ async function mCreateBookmarkFromMeta(bookmarkMeta, title, description = "") {
     throw new Error(`Failed to make selection`);
   }
 
-  let newBookmark = await this.createBookmark({
+  let newBookmark = await app.createBookmark({
     qProp: {
       qInfo: {
         qType: "bookmark",
@@ -80,8 +90,17 @@ async function mCloneBookmark(
 ) {
   if (!title) throw new Error("Bookmark title is required");
 
-  let sourceBookmarkMeta = await mGetBookmarkMeta(sourceBookmarkId, state);
-  return await mCreateBookmarkFromMeta(sourceBookmarkMeta, title, description);
+  let sourceBookmarkMeta = await mGetBookmarkMeta(
+    sourceBookmarkId,
+    state,
+    this
+  );
+  return await mCreateBookmarkFromMeta(
+    sourceBookmarkMeta,
+    title,
+    description,
+    this
+  );
 }
 
 function destructSetAnalysis(setAnalysisRaw) {
@@ -122,7 +141,10 @@ function destructSetAnalysis(setAnalysisRaw) {
     // if the value is list of values
     if (!regexExpression.test(valueRaw)) {
       type = "list";
-      let rawValues = JSON.parse(`[${valueRaw.replace(/'/g, '"')}]`);
+
+      let temp = valueRaw.replace(/','/g, '","');
+      temp = `["${temp.substr(1, temp.length - 2)}"]`;
+      let rawValues = JSON.parse(temp);
 
       // determine the value based on the type - string or number
       // fields are different based on the value type
