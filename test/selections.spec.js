@@ -50,4 +50,17 @@ describe("Selections", function () {
       ) &&
       expect(selectionsNative.qSelections.length).to.be.equal(1);
   });
+
+  it("Return all selected values in a field (more than 6)", async function () {
+    let makeSelections = await this.qlik.app
+      .getField(docConf.selectionField)
+      .then(async (f) => {
+        return await f.selectAll();
+      });
+
+    let currentSelections = await this.qlik.app.mSelectionsAll();
+    expect(currentSelections.selectedValues[0].qValues.length).to.be.equal(
+      currentSelections.selections.qSelections[0].qTotal
+    );
+  });
 });

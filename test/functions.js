@@ -24,6 +24,7 @@ const docConf = {
   field: "Invoice Number",
   otherField: "Region Name",
   otherFieldValues: ["Western", "Central", "Southern"],
+  selectionField: "City",
 };
 
 module.exports = {
