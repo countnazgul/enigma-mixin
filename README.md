@@ -2,8 +2,6 @@
 
 ![Test](https://raw.githubusercontent.com/countnazgul/enigma-mixin/master/test/badge.svg?sanitize=true)
 
-## **Beta stage**
-
 `enigma.js` functionality can be extended via [mixin](https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins). This repository contains set of mixins that can be added to any `enigma.js` instance. Some of the mixins are quite trivial but I've been lazy enough to remember the objects/params and decided to create these "shortcuts" :)
 
 btw who ever made the `mixin` option available in `enigma.js` ... Thank you!
@@ -82,7 +80,7 @@ The available `mixin` are "grouped" in the following categories:
 
 ### Selections
 
-- `mSelectionsAll` - returns the current selections (if any)
+- `mSelectionsAll` - returns the current selections (if any). This method will return all selected values (even if more than 6 values are selected)
   - no parameters
 - `mSelectionsFields` - return just an array of the fields, having selections in them
   - no parameters
@@ -141,6 +139,34 @@ The available `mixin` are "grouped" in the following categories:
 
 - `mExtensionObjectsAll` - return a list with all extensions objects in the document
   - no parameters
+
+### Bookmarks
+
+- `mGetBookmarksMeta` - returns full info about all bookmarks (to which the user have access)
+  - `state` (`optional`; default is `$`)
+    Each row will return:
+    - `layout` - layout of the Qlik object (`getLayout()`)
+    - `properties` - properties of the Qlik object (`getProperties()`)
+    - `setAnalysis` - raw set analysis returned from Qlik. For example: `"<state_name={'California','Minnesota','Ohio','Texas'}>"`
+    - `setAnalysisDestructed` - set analysis but in more readable format. Using the example above:
+      - field: `state_name`
+      - type: `field` or `expression`
+      - values: array of values in the bookmark.
+- `mGetBookmarkMeta` - similar to `mGetBookmarksMeta` but returns the meta for only one bookmark
+  - `bookmarkId`
+  - `state` (`optional`; default is `$`)
+- `mCreateBookmarkFromMeta` - create new bookmark using data from existing bookmark
+  - `bookmarkMeta` -
+  - `title` -
+  - `description` (`optional`; default is empty string)
+- `mGetBookmarkValues` - return the values for specific bookmark
+  - `bookmarkId`
+  - `state` (`optional`; default is `$`)
+- `mCloneBookmark` - create new bookmark using data from existing bookmark (kinda similar to `mCreateBookmarkFromMeta`. In the near future only one of these methods will stay)
+  - `sourceBookmarkId` -
+  - `state` -
+  - `title`
+  - `description` (`optional`; default is empty string)
 
 ## Build/Unbuild
 
