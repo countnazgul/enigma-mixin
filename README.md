@@ -1,5 +1,7 @@
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T0148ZP)
 
+![Test](https://raw.githubusercontent.com/countnazgul/enigma-mixin/master/test/badge.svg?sanitize=true)
+
 ## **Beta stage**
 
 `enigma.js` functionality can be extended via [mixin](https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins). This repository contains set of mixins that can be added to any `enigma.js` instance. Some of the mixins are quite trivial but I've been lazy enough to remember the objects/params and decided to create these "shortcuts" :)
@@ -113,16 +115,19 @@ The available `mixin` are "grouped" in the following categories:
 ### Variables
 
 - `mVariableGetAll` - return a list with all variables in the document
+
   - showSession (`optional`; default `false`)
   - showConfig (`optional`; default `false`)
   - showReserved (`optional`; default `false`)
 
 - `mVariableUpdateById` - update existing variable by id
+
   - id - id of the variable, to be updated
   - definition - the expression/definition of the variable
   - comment - (`optional`)
 
 - `mVariableUpdateByName` - update existing variable by name
+
   - name - name of the variable, to be updated
   - definition - the expression/definition of the variable
   - comment - (`optional`)
@@ -138,34 +143,33 @@ The available `mixin` are "grouped" in the following categories:
   - no parameters
 
 ## Build/Unbuild
+
 If you haven't used [corectl](https://github.com/qlik-oss/corectl) now its a good time to start :) But I've wanted to have the same/similar functionality (for building/unbuilding app) in [enigma.js](https://github.com/qlik-oss/enigma.js/blob/master/schemas/12.67.2.json) as well
 
 ### Unbuild
 
-* `mUnbuild` - Extracts all parts of a Qlik Sense app (apart from the data itself) into JSON object. The resulted JSON object have the following format:
+- `mUnbuild` - Extracts all parts of a Qlik Sense app (apart from the data itself) into JSON object. The resulted JSON object have the following format:
 
-    - appProperties (`object`)
-    - connections (`array`)
-    - dimensions (`array`)
-    - measures (`array`)
-    - objects (`array`) - all other objects. Including sheets, charts, filters etc.
-    - script (`string`)
-    - variables (`array`)
+  - appProperties (`object`)
+  - connections (`array`)
+  - dimensions (`array`)
+  - measures (`array`)
+  - objects (`array`) - all other objects. Including sheets, charts, filters etc.
+  - script (`string`)
+  - variables (`array`)
 
 The result JSON can be stored in file (or multiple files) and put under version control
 
 ### Build
 
-* `mBuild` - Opposite to `unbuild`. Provide a JSON object with Qlik objects and this mixin will update the existing objects or, if they do not exists, it will create them. The structure of the input JSON object must be in specific format (see `unbuild`). 
+- `mBuild` - Opposite to `unbuild`. Provide a JSON object with Qlik objects and this mixin will update the existing objects or, if they do not exists, it will create them. The structure of the input JSON object must be in specific format (see `unbuild`).
 
 ### **To preserve the changes the app have to be saved. The build command do not save the app automatically!**
 
 Both `mBuild` and `mUnbuild` are throwing errors (if there are any errors of course). Because of this they need to be followed by `catch` ... just in case. For example:
 
 ```javascript
-  let build = await qDoc.mBuild(data).catch(function (e) {
-    // do something with the error here
-  })
-```  
-
-
+let build = await qDoc.mBuild(data).catch(function (e) {
+  // do something with the error here
+});
+```
