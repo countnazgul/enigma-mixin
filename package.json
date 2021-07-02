@@ -51,7 +51,7 @@
     "rollup-plugin-terser": "^5.3.1",
     "rollup-plugin-uglify": "^6.0.4",
     "serialize-javascript": "^5.0.1",
-    "ws": "^6.2.1"
+    "ws": "^7.4.6"
   },
   "repository": {
     "type": "git",
