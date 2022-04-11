@@ -1,6 +1,6 @@
 {
   "name": "enigma-mixin",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Set of Qlik Sense enigma.js mixin",
   "author": {
     "email": "stefan.stoichev@gmail.com",
@@ -8,20 +8,24 @@
     "url": "https://sstoichev.eu"
   },
   "license": "MIT",
-  "main": "dist/enigma-mixin.min.js",
+  "main": "dist/index.js",
   "engines": {
     "node": ">=8"
   },
   "scripts": {
     "test": "mocha --reporter ./node_modules/mocha-badge-generator",
     "build-test": "rollup --config",
-    "build": "rollup -c && cross-env NODE_ENV=production rollup -c"
+    "build1": "rollup -c && cross-env NODE_ENV=production rollup -c",
+    "build": "rollup -c",
+    "docs": "npx typedoc src/index.doc.ts --name \"Enigma Mixins\" --excludePrivate --hideGenerator"
   },
+  "module": "dist/index.es.js",
   "files": [
     "dist/*",
     "*.json",
     "*.md",
-    "LICENSE"
+    "LICENSE",
+    "!images/*"
   ],
   "keywords": [
     "enigma.js",
@@ -32,33 +36,24 @@
     "qlik-sense-desktop"
   ],
   "devDependencies": {
-    "@babel/preset-env": "^7.13.9",
-    "chai": "^4.3.3",
-    "cross-env": "^5.2.1",
-    "enigma.js": "^2.7.2",
-    "es6-template-strings": "^2.0.1",
-    "extend": "^3.0.2",
-    "mocha": "^8.3.1",
-    "mocha-badge-generator": "^0.9.0",
-    "nyc": "^15.1.0",
-    "rollup": "^1.32.1",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-filesize": "^6.2.1",
-    "rollup-plugin-license": "^2.3.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-resolve": "^4.2.4",
-    "rollup-plugin-terser": "^5.3.1",
-    "rollup-plugin-uglify": "^6.0.4",
-    "serialize-javascript": "^5.0.1",
-    "ws": "^7.4.6"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/countnazgul/enigma-mixin"
-  },
-  "bugs": {
-    "url": "https://github.com/countnazgul/enigma-mixin/issues"
-  },
-  "dependencies": {}
+    "@rollup/plugin-commonjs": "^21.0.3",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@types/chai": "^4.3.0",
+    "@types/enigma.js": "^2.2.2",
+    "@types/mocha": "^9.1.0",
+    "@types/qlik-engineapi": "^12.67.12",
+    "chai": "^4.3.6",
+    "enigma.js": "^2.9.0",
+    "mocha": "^9.2.2",
+    "rollup": "^2.70.1",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-node-builtins": "^2.0.0",
+    "rollup-plugin-typescript2": "^0.31.2",
+    "ts-node": "^10.7.0",
+    "typedoc": "^0.22.14",
+    "typescript": "^4.6.3",
+    "ws": "^8.5.0"
+  }
 }

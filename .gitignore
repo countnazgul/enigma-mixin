@@ -6,6 +6,7 @@ connect.js
 unbuild.json
 coverage/
 playground.js
+playground.spec.ts
 dist/
 
 temp/

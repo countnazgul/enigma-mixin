@@ -6,3 +6,14 @@ playground.js
 rollup.config.js
 package-lock.json
 coverage
+node_modules/
+dist/
+out/
+.env
+test/playground.spec.ts
+temp.md
+.VSCodeCounter
+src/main.doc.ts
+.npmrc
+test/Test.zip
+*.qvf
