@@ -1,3 +1,25 @@
+import { IGenericBaseLayoutExt } from "./qSelections";
+
+export interface IGenericObjectPropertiesExt
+  extends EngineAPI.IGenericObjectProperties {
+  field: {
+    qListObjectDef: {
+      qExpressions: string[];
+      qFrequencyMode: string;
+      qStateName: string;
+      qInitialDataFetch: EngineAPI.INxPage[];
+      qDef: {
+        qActiveField: number;
+        qFieldDefs: string[];
+        qFieldLabels: string[];
+        qGrouping: string;
+        qNumberPresentations: EngineAPI.IFieldAttributes[];
+        qSortCriterias: EngineAPI.ISortCriteria[];
+      };
+    };
+  };
+}
+
 export async function mGetTablesAndFields(): Promise<
   { table: string; field: string }[]
 > {
@@ -61,8 +83,8 @@ export async function mCreateSessionListbox(
   type?: string
 ): Promise<{
   obj: EngineAPI.IGenericObject;
-  layout: EngineAPI.IGenericBaseLayout;
-  props: EngineAPI.IGenericObjectProperties;
+  layout: IGenericBaseLayoutExt;
+  props: IGenericObjectPropertiesExt;
 }> {
   const _this: EngineAPI.IApp = this;
 
@@ -97,8 +119,8 @@ export async function mCreateSessionListbox(
 
   const obj = await _this.createSessionObject(lbDef);
   const [props, layout] = await Promise.all([
-    await obj.getProperties(),
-    await obj.getLayout(),
+    (await obj.getProperties()) as IGenericObjectPropertiesExt,
+    (await obj.getLayout()) as IGenericBaseLayoutExt,
   ]);
 
   return {

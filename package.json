@@ -13,7 +13,7 @@
     "node": ">=8"
   },
   "scripts": {
-    "test": "mocha --reporter ./node_modules/mocha-badge-generator",
+    "test": "set TS_NODE_PROJECT=tsconfig.test.json&mocha --require ts-node/register test/**/*.spec.ts",
     "build-test": "rollup --config",
     "build1": "rollup -c && cross-env NODE_ENV=production rollup -c",
     "build": "rollup -c",
@@ -43,6 +43,7 @@
     "@types/mocha": "^9.1.1",
     "@types/qlik-engineapi": "^12.67.12",
     "chai": "^4.3.6",
+    "dotenv": "^16.0.1",
     "enigma.js": "^2.9.0",
     "mocha": "^10.0.0",
     "rollup": "^2.78.1",

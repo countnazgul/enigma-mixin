@@ -1,3 +1,7 @@
+import path from "path";
+const dotEnvPath = path.resolve("./.env");
+require("dotenv").config({ path: dotEnvPath });
+
 import chai from "chai";
 import enigma from "enigma.js";
 import WebSocket from "ws";
@@ -21,9 +25,7 @@ describe("Root", function () {
 
     const global: EngineAPI.IGlobal = await session.open();
 
-    const doc: EngineAPI.IApp = await global.openDoc(
-      "C:\\Users\\countnazgul\\Documents\\Qlik\\Sense\\Apps\\Temp.qvf"
-    );
+    const doc: EngineAPI.IApp = await global.openDoc(`${process.env.QLIK_APP}`);
 
     const mixinFunctions = [
       "mSelectInField",

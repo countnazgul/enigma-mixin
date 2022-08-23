@@ -5,12 +5,14 @@ import {
   mVariableUpdateByName,
 } from "./mixins/doc/qVariables";
 import {
+  IGenericObjectPropertiesExt,
   mCreateSessionListbox,
   mGetFields,
   mGetTables,
   mGetTablesAndFields,
 } from "./mixins/doc/qTablesAndFields";
 import {
+  IGenericBaseLayoutExt,
   mSelectInField,
   mSelectionsAll,
   mSelectionsFields,
@@ -118,8 +120,8 @@ declare global {
         type?: string
       ): Promise<{
         obj: EngineAPI.IGenericObject;
-        layout: EngineAPI.IGenericBaseLayout;
-        props: EngineAPI.IGenericObjectProperties;
+        layout: IGenericBaseLayoutExt;
+        props: IGenericObjectPropertiesExt;
       }>;
       mGetTables(): Promise<string[]>;
       mGetTablesAndFields(): Promise<{ table: string; field: string }[]>;
