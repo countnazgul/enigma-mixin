@@ -10,14 +10,15 @@
   "license": "MIT",
   "main": "dist/index.js",
   "engines": {
-    "node": ">=8"
+    "node": ">=14"
   },
+  "engineStrict": true,
   "scripts": {
     "test": "set TS_NODE_PROJECT=tsconfig.test.json&mocha --require ts-node/register test/**/*.spec.ts",
     "build-test": "rollup --config",
-    "build1": "rollup -c && cross-env NODE_ENV=production rollup -c",
+    "build-prod": "rollup -c && cross-env NODE_ENV=production rollup -c",
     "build": "rollup -c",
-    "docs": "npx typedoc src/index.doc.ts --name \"Enigma Mixins\" --excludePrivate --hideGenerator"
+    "docs": "npx typedoc src/index.doc.ts --name \"Enigma Mixins\" --excludePrivate --hideGenerator --darkHighlightTheme dark-plus"
   },
   "module": "dist/index.es.js",
   "files": [
@@ -25,7 +26,10 @@
     "*.json",
     "*.md",
     "LICENSE",
-    "!images/*"
+    "!images/*",
+    "!docs/*",
+    "!tsconfig.test.json",
+    "!tsconfig.json"
   ],
   "keywords": [
     "enigma.js",
