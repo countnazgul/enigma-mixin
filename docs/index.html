@@ -1,0 +1,296 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Enigma Mixins</title><meta name="description" content="Documentation for Enigma Mixins"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base=".">
+<div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">Enigma Mixins</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-8 col-content">
+<div class="tsd-page-title">
+<h2>Enigma Mixins</h2></div>
+<div class="tsd-panel tsd-typography">
+<a href="#enigmajs-mixins" id="enigmajs-mixins" style="color: inherit; text-decoration: none;">
+  <h1>Enigma.js Mixins</h1>
+</a>
+<p><code>enigma.js</code> functionality can be extended via <a href="https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins">mixin</a>. This repository contains set of mixins that can be added to any <code>enigma.js</code> instance. Some of the mixins are quite trivial but I&#39;ve been lazy enough to remember the objects/params and decided to create these &quot;shortcuts&quot; :)</p>
+<p>btw who ever made the <code>mixin</code> option available in <code>enigma.js</code> ... Thank you!</p>
+
+<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
+  <h2>Requirements</h2>
+</a>
+<p>TBA</p>
+
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h2>Installation</h2>
+</a>
+<p>This project don&#39;t include <code>enigma.js</code> itself. Make sure that <code>enigma.js</code> is installed:</p>
+<blockquote>
+<p><code>npm install enigma.js</code></p>
+</blockquote>
+<p>Once <code>enigma.js</code> is installed, install the mixins:</p>
+<blockquote>
+<p><code>npm install enigma-mixins</code></p>
+</blockquote>
+
+<a href="#init" id="init" style="color: inherit; text-decoration: none;">
+  <h2>Init</h2>
+</a>
+
+<a href="#browser-usage" id="browser-usage" style="color: inherit; text-decoration: none;">
+  <h3>Browser usage</h3>
+</a>
+<pre><code class="language-javascript"><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-2">enigma</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;enigma.js&quot;</span><span class="hl-1">;</span><br/><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-2">schema</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;enigma.js/schemas/12.20.0.json&quot;</span><span class="hl-1">;</span><br/><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-2">enigmaMixins</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&quot;enigma-mixins&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">// Create enigma session as usual</span><br/><span class="hl-4">// but include the mixin property</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">session</span><span class="hl-1"> = </span><span class="hl-2">enigma</span><span class="hl-1">.</span><span class="hl-7">create</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-2">schema</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">mixins:</span><span class="hl-1"> [</span><span class="hl-2">enigmaMixins</span><span class="hl-1">],</span><br/><span class="hl-1">  </span><span class="hl-2">url:</span><span class="hl-1"> </span><span class="hl-3">&quot;ws://localhost:4848/app/engineData&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-7">createSocket</span><span class="hl-2">:</span><span class="hl-1"> (</span><span class="hl-2">url</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-7">WebSocket</span><span class="hl-1">(</span><span class="hl-2">url</span><span class="hl-1">),</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#node-js-usage" id="node-js-usage" style="color: inherit; text-decoration: none;">
+  <h3>Node JS usage</h3>
+</a>
+<pre><code class="language-javascript"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">enigma</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&quot;enigma.js&quot;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">WebSocket</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&quot;ws&quot;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">schema</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&quot;enigma.js/schemas/12.20.0.json&quot;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">enigmaMixins</span><span class="hl-1"> = </span><span class="hl-7">require</span><span class="hl-1">(</span><span class="hl-3">&quot;enigma-mixins&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">session</span><span class="hl-1"> = </span><span class="hl-2">enigma</span><span class="hl-1">.</span><span class="hl-7">create</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-2">schema</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-2">mixins:</span><span class="hl-1"> [</span><span class="hl-2">enigmaMixins</span><span class="hl-1">],</span><br/><span class="hl-1">  </span><span class="hl-2">url:</span><span class="hl-1"> </span><span class="hl-3">&quot;ws://localhost:4848/app/engineData&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-7">createSocket</span><span class="hl-2">:</span><span class="hl-1"> (</span><span class="hl-2">url</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-7">WebSocket</span><span class="hl-1">(</span><span class="hl-2">url</span><span class="hl-1">),</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+  <h2>Usage</h2>
+</a>
+<p>At the moment this project includes only mixins that are extending the <code>enigma.js</code> <code>Doc</code> object. After the mixin is imported a new set of functions will be available in the <code>Doc</code> instance.</p>
+<pre><code class="language-javascript"><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-2">global</span><span class="hl-1"> = </span><span class="hl-0">await</span><span class="hl-1"> </span><span class="hl-2">session</span><span class="hl-1">.</span><span class="hl-7">open</span><span class="hl-1">();</span><br/><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-2">qDoc</span><span class="hl-1"> = </span><span class="hl-0">await</span><span class="hl-1"> </span><span class="hl-2">global</span><span class="hl-1">.</span><span class="hl-7">openDoc</span><span class="hl-1">(</span><span class="hl-3">&quot;/data/Helpdesk Management.qvf&quot;</span><span class="hl-1">);</span>
+</code></pre>
+<p>After this <code>qDoc</code> will have all the mixins available</p>
+<p><img src="./src/images/mixin.png" alt="mixin"></p>
+
+<a href="#mixins" id="mixins" style="color: inherit; text-decoration: none;">
+  <h2>Mixins</h2>
+</a>
+<p>The available <code>mixin</code> are &quot;grouped&quot; in the following categories:</p>
+<ul>
+<li>Selections</li>
+<li>TableAndFields</li>
+<li>Variables</li>
+<li>Extensions</li>
+<li>Build/Unbuild</li>
+</ul>
+
+<a href="#selections" id="selections" style="color: inherit; text-decoration: none;">
+  <h3>Selections</h3>
+</a>
+<ul>
+<li><p><code>mSelectionsAll</code> - returns the current selections (if any). This method will return all selected values (even if more than 6 values are selected)</p>
+<ul>
+<li>no parameters</li>
+</ul>
+</li>
+<li><p><code>mSelectionsFields</code> - return just an array of the fields, having selections in them</p>
+<ul>
+<li>no parameters</li>
+</ul>
+</li>
+<li><p><code>mSelectionsSimple</code> - returns array of <code>field &lt;-&gt; selected value</code></p>
+<ul>
+<li><p><code>groupByField</code> (<code>optional</code>; default <code>false</code>) If this argument is provided the array will be grouped by field name:</p>
+<pre><code class="language-javascript"><span class="hl-1">[</span><br/><span class="hl-1">  {</span><span class="hl-2">field:</span><span class="hl-1"> </span><span class="hl-3">&quot;Field 1&quot;</span><span class="hl-1">: </span><span class="hl-2">values</span><span class="hl-1">: [...]},</span><br/><span class="hl-1">  {</span><span class="hl-2">field:</span><span class="hl-1"> </span><span class="hl-3">&quot;Field 2&quot;</span><span class="hl-1">: </span><span class="hl-2">values</span><span class="hl-1">: [...]},</span><br/><span class="hl-1">  ...</span><br/><span class="hl-1">]</span>
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p><code>mSelectInField</code> - select a value(s) in the specified field</p>
+<ul>
+<li>field - field name</li>
+<li>values - array of string values to be selected</li>
+<li>toggle (<code>optional</code>; default <code>false</code>)</li>
+</ul>
+</li>
+</ul>
+
+<a href="#tableandfields" id="tableandfields" style="color: inherit; text-decoration: none;">
+  <h3>TableAndFields</h3>
+</a>
+<ul>
+<li><code>mGetTablesAndFields</code> - returns an object array with the field &lt;-&gt; table relation<ul>
+<li>no parameters</li>
+</ul>
+</li>
+<li><code>mGetTables</code> - returns an array with all table names<ul>
+<li>no parameters</li>
+</ul>
+</li>
+<li><code>mGetFields</code> - returns an array with all field names<ul>
+<li>no parameters</li>
+</ul>
+</li>
+<li><code>mCreateSessionListbox</code> - creates a <strong>session</strong> listbox object for the specified field<ul>
+<li>fieldName</li>
+<li>type - (<code>optional</code>; default <code>session-listbox</code>) - type of the listbox</li>
+</ul>
+</li>
+</ul>
+
+<a href="#variables" id="variables" style="color: inherit; text-decoration: none;">
+  <h3>Variables</h3>
+</a>
+<ul>
+<li><p><code>mVariableGetAll</code> - return a list with all variables in the document</p>
+<ul>
+<li>showSession (<code>optional</code>; default <code>false</code>)</li>
+<li>showConfig (<code>optional</code>; default <code>false</code>)</li>
+<li>showReserved (<code>optional</code>; default <code>false</code>)</li>
+</ul>
+</li>
+<li><p><code>mVariableUpdateById</code> - update existing variable by id</p>
+<ul>
+<li>id - id of the variable, to be updated</li>
+<li>definition - the expression/definition of the variable</li>
+<li>comment - (<code>optional</code>)</li>
+</ul>
+</li>
+<li><p><code>mVariableUpdateByName</code> - update existing variable by name</p>
+<ul>
+<li>name - name of the variable, to be updated</li>
+<li>definition - the expression/definition of the variable</li>
+<li>comment - (<code>optional</code>)</li>
+</ul>
+</li>
+<li><p><code>mVariableCreate</code> - create new variable</p>
+<ul>
+<li>name - (<code>optional</code>; default is empty string)</li>
+<li>comment (<code>optional</code>; default is empty string)</li>
+<li>definition (<code>optional</code>;default is empty string)</li>
+</ul>
+</li>
+</ul>
+
+<a href="#extensions" id="extensions" style="color: inherit; text-decoration: none;">
+  <h3>Extensions</h3>
+</a>
+<ul>
+<li><code>mExtensionObjectsAll</code> - return a list with all extensions objects in the document<ul>
+<li>no parameters</li>
+</ul>
+</li>
+</ul>
+
+<a href="#bookmarks" id="bookmarks" style="color: inherit; text-decoration: none;">
+  <h3>Bookmarks</h3>
+</a>
+<ul>
+<li><code>mGetBookmarksMeta</code> - returns full info about all bookmarks (to which the user have access)<ul>
+<li><code>state</code> (<code>optional</code>; default is <code>$</code>)
+Each row will return:<ul>
+<li><code>layout</code> - layout of the Qlik object (<code>getLayout()</code>)</li>
+<li><code>properties</code> - properties of the Qlik object (<code>getProperties()</code>)</li>
+<li><code>setAnalysis</code> - raw set analysis returned from Qlik. For example: <code>&quot;&lt;state_name={&#39;California&#39;,&#39;Minnesota&#39;,&#39;Ohio&#39;,&#39;Texas&#39;}&gt;&quot;</code></li>
+<li><code>setAnalysisDestructed</code> - set analysis but in more readable format. Using the example above:<ul>
+<li>field: <code>state_name</code></li>
+<li>type: <code>field</code> or <code>expression</code></li>
+<li>values: array of values in the bookmark.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>mGetBookmarkMeta</code> - similar to <code>mGetBookmarksMeta</code> but returns the meta for only one bookmark<ul>
+<li><code>bookmarkId</code></li>
+<li><code>state</code> (<code>optional</code>; default is <code>$</code>)</li>
+</ul>
+</li>
+<li><code>mCreateBookmarkFromMeta</code> - create new bookmark using data from existing bookmark<ul>
+<li><code>bookmarkMeta</code> -</li>
+<li><code>title</code> -</li>
+<li><code>description</code> (<code>optional</code>; default is empty string)</li>
+</ul>
+</li>
+<li><code>mGetBookmarkValues</code> - return the values for specific bookmark<ul>
+<li><code>bookmarkId</code></li>
+<li><code>state</code> (<code>optional</code>; default is <code>$</code>)</li>
+</ul>
+</li>
+<li><code>mCloneBookmark</code> - create new bookmark using data from existing bookmark (kinda similar to <code>mCreateBookmarkFromMeta</code>. In the near future only one of these methods will stay)<ul>
+<li><code>sourceBookmarkId</code> -</li>
+<li><code>state</code> -</li>
+<li><code>title</code></li>
+<li><code>description</code> (<code>optional</code>; default is empty string)</li>
+</ul>
+</li>
+</ul>
+
+<a href="#buildunbuild" id="buildunbuild" style="color: inherit; text-decoration: none;">
+  <h2>Build/Unbuild</h2>
+</a>
+<p>If you haven&#39;t used <a href="https://github.com/qlik-oss/corectl">corectl</a> now its a good time to start :) But I&#39;ve wanted to have the same/similar functionality (for building/unbuilding app) in <a href="https://github.com/qlik-oss/enigma.js/blob/master/schemas/12.67.2.json">enigma.js</a> as well</p>
+
+<a href="#unbuild" id="unbuild" style="color: inherit; text-decoration: none;">
+  <h3>Unbuild</h3>
+</a>
+<ul>
+<li><p><code>mUnbuild</code> - Extracts all parts of a Qlik Sense app (apart from the data itself) into JSON object. The resulted JSON object have the following format:</p>
+<ul>
+<li>appProperties (<code>object</code>)</li>
+<li>connections (<code>array</code>)</li>
+<li>dimensions (<code>array</code>)</li>
+<li>measures (<code>array</code>)</li>
+<li>objects (<code>array</code>) - all other objects. Including sheets, charts, filters etc.</li>
+<li>script (<code>string</code>)</li>
+<li>variables (<code>array</code>)</li>
+</ul>
+</li>
+</ul>
+<p>The result JSON can be stored in file (or multiple files) and put under version control</p>
+
+<a href="#build" id="build" style="color: inherit; text-decoration: none;">
+  <h3>Build</h3>
+</a>
+<ul>
+<li><code>mBuild</code> - Opposite to <code>unbuild</code>. Provide a JSON object with Qlik objects and this mixin will update the existing objects or, if they do not exists, it will create them. The structure of the input JSON object must be in specific format (see <code>unbuild</code>).</li>
+</ul>
+
+<a href="#to-preserve-the-changes-the-app-have-to-be-saved-the-build-command-do-not-save-the-app-automatically" id="to-preserve-the-changes-the-app-have-to-be-saved-the-build-command-do-not-save-the-app-automatically" style="color: inherit; text-decoration: none;">
+  <h3><strong>To preserve the changes the app have to be saved. The build command do not save the app automatically!</strong></h3>
+</a>
+<p>Both <code>mBuild</code> and <code>mUnbuild</code> are throwing errors (if there are any errors of course). Because of this they need to be followed by <code>catch</code> ... just in case. For example:</p>
+<pre><code class="language-javascript"><span class="hl-5">let</span><span class="hl-1"> </span><span class="hl-2">build</span><span class="hl-1"> = </span><span class="hl-0">await</span><span class="hl-1"> </span><span class="hl-2">qDoc</span><span class="hl-1">.</span><span class="hl-7">mBuild</span><span class="hl-1">(</span><span class="hl-2">data</span><span class="hl-1">).</span><span class="hl-7">catch</span><span class="hl-1">(</span><span class="hl-5">function</span><span class="hl-1"> (</span><span class="hl-2">e</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-4">// do something with the error here</span><br/><span class="hl-1">});</span>
+</code></pre>
+</div></div>
+<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<nav class="tsd-navigation primary">
+<details class="tsd-index-accordion" open><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li class="current selected"><a href="modules.html">Enigma <wbr/>Mixins</a>
+<ul></ul></li></ul></div></details></nav>
+<nav class="tsd-navigation secondary menu-sticky">
+<ul>
+<li class="tsd-kind-interface"><a href="interfaces/DocMixin.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-256-path"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)" id="icon-256-text"></path></svg>Doc<wbr/>Mixin</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IConnection.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IConnection</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IFieldValue.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IField<wbr/>Value</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericBaseLayout.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Base<wbr/>Layout</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericBookmarkLayout.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Bookmark<wbr/>Layout</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericBookmarkProperties.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Bookmark<wbr/>Properties</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericDimensionProperties.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Dimension<wbr/>Properties</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericMeasureProperties.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Measure<wbr/>Properties</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericObject.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Object</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericObjectEntry.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Object<wbr/>Entry</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericObjectProperties.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Object<wbr/>Properties</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IGenericVariableProperties.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IGeneric<wbr/>Variable<wbr/>Properties</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/INxAppProperties.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>INx<wbr/>App<wbr/>Properties</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/INxVariableListItem.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>INx<wbr/>Variable<wbr/>List<wbr/>Item</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/ISelectionListObject.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>ISelection<wbr/>List<wbr/>Object</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/IUnbuildApp.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>IUnbuild<wbr/>App</a></li>
+<li class="tsd-kind-type-alias"><a href="types/IBookmarkValue.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4194304-path"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)" id="icon-4194304-text"></path></svg>IBookmark<wbr/>Value</a></li>
+<li class="tsd-kind-type-alias"><a href="types/IExtension.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>IExtension</a></li>
+<li class="tsd-kind-type-alias"><a href="types/IMBookmarkMeta.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>IMBookmark<wbr/>Meta</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ISetAnalysisDestructed.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>ISet<wbr/>Analysis<wbr/>Destructed</a></li></ul></nav></div></div>
+<div class="overlay"></div><script src="assets/main.js"></script></body></html>
