@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "target": "ES6",
+        "declaration": true,
+        "declarationDir": "./dist",
+        "module": "ESNext",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "lib": [
+            "es2021"
+        ],
+        "typeRoots": [
+            "./node_modules/@types"
+        ]
+    },
+    "ts-node": {
+        "files": true
+    },
+    "include": [
+        "src/**/*",
+        "./src/**/*.d.ts"
+    ],
+    "exclude": [
+        "typing"
+    ]
+}

@@ -7,6 +7,12 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Launch RAW Playground",
+            "program": "${workspaceFolder}/playground.js",
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Playground",
             "program": "${workspaceFolder}/playground.js",
             "env": {
@@ -15,8 +21,9 @@
                 "QS_PORT": "4848",
                 "QS_DOC": "C:\\Users\\countnazgul\\Documents\\Qlik\\Sense\\Apps\\Consumer_Sales(2).qvf",
                 // "QS_DOC": "C:\\Users\\countnazgul\\Documents\\Qlik\\Sense\\Apps\\Consumer_Sales(1).qvf",
-                // "QS_DOC": "/data/Consumer_Sales(1).qvf",
+                "QS_DOC": "/data/Consumer_Sales(1).qvf",
                 // "QS_DOC": "/data/Executive Dashboard(1).qvf",
+                // "QS_DOC": "/data/CRM(1).qvf",
                 // "QS_DOC": "/data/RxSales.qvf",
                 // "QS_DOC": "/data/build-test.qvf",
                 "release": "dev"

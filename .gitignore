@@ -1,11 +1,14 @@
 dist/*
+dist/
 node_modules
 node_modules/
 docs
+docs/
 connect.js
 unbuild.json
 coverage/
 playground.js
+playground.spec.ts
 dist/
-
 temp/
+.env

@@ -1,6 +1,4 @@
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T0148ZP)
-
-![Test](https://raw.githubusercontent.com/countnazgul/enigma-mixin/master/test/badge.svg?sanitize=true)
+# Enigma.js Mixins
 
 `enigma.js` functionality can be extended via [mixin](https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins). This repository contains set of mixins that can be added to any `enigma.js` instance. Some of the mixins are quite trivial but I've been lazy enough to remember the objects/params and decided to create these "shortcuts" :)
 
@@ -22,7 +20,7 @@ Once `enigma.js` is installed, install the mixins:
 
 ## Init
 
-**Browser usage**
+### Browser usage
 
 ```javascript
 import enigma from "enigma.js";
@@ -39,7 +37,7 @@ const session = enigma.create({
 });
 ```
 
-**Node JS usage**
+### Node JS usage
 
 ```javascript
 const enigma = require("enigma.js");
@@ -85,14 +83,17 @@ The available `mixin` are "grouped" in the following categories:
 - `mSelectionsFields` - return just an array of the fields, having selections in them
   - no parameters
 - `mSelectionsSimple` - returns array of `field <-> selected value`
+
   - `groupByField` (`optional`; default `false`) If this argument is provided the array will be grouped by field name:
-    ```
+
+    ```javascript
     [
       {field: "Field 1": values: [...]},
       {field: "Field 2": values: [...]},
       ...
     ]
     ```
+
 - `mSelectInField` - select a value(s) in the specified field
   - field - field name
   - values - array of string values to be selected
