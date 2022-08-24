@@ -1,5 +1,8 @@
 # Enigma.js Mixins
 
+> **Note**
+> NOT AFFILIATED WITH QLIK
+
 `enigma.js` functionality can be extended via [mixin](https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins). This repository contains set of mixins that can be added to any `enigma.js` instance. Some of the mixins are quite trivial but I've been lazy enough to remember the objects/params and decided to create these "shortcuts" :)
 
 btw who ever made the `mixin` option available in `enigma.js` ... Thank you!
@@ -200,3 +203,7 @@ let build = await qDoc.mBuild(data).catch(function (e) {
   // do something with the error here
 });
 ```
+
+## Methods
+
+Full list of available methods can be found [here](https://countnazgul.github.io/enigma-mixin/)
