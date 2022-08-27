@@ -10,6 +10,7 @@ import {
   mGetFields,
   mGetTables,
   mGetTablesAndFields,
+  mGetSyntheticTables,
 } from "./mixins/doc/qTablesAndFields";
 import {
   IGenericBaseLayoutExt,
@@ -126,6 +127,7 @@ declare global {
       mGetTables(): Promise<string[]>;
       mGetTablesAndFields(): Promise<{ table: string; field: string }[]>;
       mGetFields(): Promise<string[]>;
+      mGetSyntheticTables(): Promise<EngineAPI.ITableRecord[]>;
       mSelectionsAll(): Promise<EngineAPI.ISelectionListObject>;
       mSelectionsSimple(): Promise<{ field: string; values: string[] }[]>;
       mSelectionsSimpleGrouped(): Promise<{ field: string; value: string }[]>;
@@ -228,6 +230,7 @@ export const docMixin = [
       mGetFields,
       mGetTables,
       mGetTablesAndFields,
+      mGetSyntheticTables,
       mExtensionObjectsAll,
       mBuild,
       mUnbuild,

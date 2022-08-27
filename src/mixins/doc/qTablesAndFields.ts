@@ -129,3 +129,17 @@ export async function mCreateSessionListbox(
     props,
   };
 }
+
+export async function mGetSyntheticTables(): Promise<EngineAPI.ITableRecord[]> {
+  const _this: EngineAPI.IApp = this;
+
+  const tables = await _this.getTablesAndKeys(
+    {} as EngineAPI.ISize,
+    {} as EngineAPI.ISize,
+    0,
+    true,
+    false
+  );
+
+  return tables.qtr.filter((t) => t.qIsSynthetic && t.qIsSynthetic == true);
+}

@@ -70,6 +70,7 @@ export interface DocMixin {
   mGetTables(): Promise<string[]>;
   mGetTablesAndFields(): Promise<{ table: string; field: string }[]>;
   mGetFields(): Promise<string[]>;
+  mGetSyntheticTables(): Promise<EngineAPI.ITableRecord[]>;
   mUnbuild(): Promise<IUnbuildApp>;
   mCreateSessionListbox(
     fieldName: string,
