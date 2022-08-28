@@ -1,21 +1,20 @@
+import { INxCellListBox } from "../..";
 import { IGenericBaseLayoutExt } from "./qSelections";
 
 export interface IGenericObjectPropertiesExt
   extends EngineAPI.IGenericObjectProperties {
-  field: {
-    qListObjectDef: {
-      qExpressions: string[];
-      qFrequencyMode: string;
-      qStateName: string;
-      qInitialDataFetch: EngineAPI.INxPage[];
-      qDef: {
-        qActiveField: number;
-        qFieldDefs: string[];
-        qFieldLabels: string[];
-        qGrouping: string;
-        qNumberPresentations: EngineAPI.IFieldAttributes[];
-        qSortCriterias: EngineAPI.ISortCriteria[];
-      };
+  qListObjectDef: {
+    qExpressions: string[];
+    qFrequencyMode: string;
+    qStateName: string;
+    qInitialDataFetch: EngineAPI.INxPage[];
+    qDef: {
+      qActiveField: number;
+      qFieldDefs: string[];
+      qFieldLabels: string[];
+      qGrouping: string;
+      qNumberPresentations: EngineAPI.IFieldAttributes[];
+      qSortCriterias: EngineAPI.ISortCriteria[];
     };
   };
 }
@@ -79,41 +78,59 @@ export async function mGetFields(): Promise<string[]> {
 // TODO: option to specify if full data to be extracted (loop though all data pages)
 export async function mCreateSessionListbox(
   fieldName: string,
-  state?: string,
-  type?: string
+  /**
+   * Additional options
+   */
+  options?: {
+    /**
+     * Create the object in specific state. Defaults to $
+     */
+    state?: string;
+    /**
+     * Type of the object. Defaults to session-listbox
+     */
+    type?: string;
+    /**
+     * Destroy the session object at the end
+     */
+    destroyOnComplete?: boolean;
+    /**
+     * By default the first 10 000 values will be extracted and returned. If need all set this option to true
+     */
+    getAllData?: boolean;
+  }
 ): Promise<{
   obj: EngineAPI.IGenericObject;
   layout: IGenericBaseLayoutExt;
   props: IGenericObjectPropertiesExt;
+  flattenData(): INxCellListBox[];
 }> {
   const _this: EngineAPI.IApp = this;
+  const dataPageHeight: number = 10000;
 
   const lbDef = {
     qInfo: {
-      qId: "",
-      qType: type ? type : "session-listbox",
+      qType: options && options.type ? options.type : "session-listbox",
     },
-    field: {
-      qListObjectDef: {
-        qStateName: state ? state : "$",
-        qDef: {
-          qFieldDefs: [fieldName],
-          qSortCriterias: [
-            {
-              qSortByState: 1,
-              qExpression: {},
-            },
-          ],
-        },
-        qInitialDataFetch: [
+    qListObjectDef: {
+      qStateName: options && options.state ? options.state : "$",
+      qDef: {
+        qFieldDefs: [fieldName],
+        qSortCriterias: [
           {
-            qTop: 0,
-            qLeft: 0,
-            qHeight: 10000,
-            qWidth: 1,
+            qSortByState: 1,
+            qExpression: {},
           },
         ],
       },
+      qInitialDataFetch: [
+        {
+          qTop: 0,
+          qLeft: 0,
+          qHeight: dataPageHeight,
+          qWidth: 1,
+        },
+      ],
     },
   };
 
@@ -123,10 +140,50 @@ export async function mCreateSessionListbox(
     (await obj.getLayout()) as IGenericBaseLayoutExt,
   ]);
 
+  if (options && options.getAllData) {
+    // calculate the total possible data pages
+    const dataPages = Math.ceil(
+      (layout.qListObject.qDimensionInfo as any).qCardinal / dataPageHeight
+    );
+
+    // if more than 1 then extract all (the first page is already extracted with the initial load)
+    if (dataPages > 1) {
+      // generate index for all data pages
+      const pages = Array.from({ length: dataPages - 1 }, (_, i) => i + 1);
+
+      await Promise.all(
+        pages.map(async (i) => {
+          const pageData = await obj.getListObjectData("/qListObjectDef", [
+            {
+              qTop: i * dataPageHeight,
+              qLeft: 0,
+              qHeight: dataPageHeight,
+              qWidth: 0,
+            },
+          ]);
+
+          // push the result to the layout object
+          layout.qListObject.qDataPages.push(pageData[0]);
+        })
+      );
+    }
+  }
+
+  if (options && options.destroyOnComplete == true)
+    await _this.destroySessionObject(obj.id);
+
+  // call this function to receive all the data in flat format
+  // flat the qMatrix of each qDataPage
+  const flattenData = () =>
+    layout.qListObject.qDataPages
+      .map((dp) => dp.qMatrix)
+      .flat(Infinity) as INxCellListBox[];
+
   return {
     obj,
     layout,
     props,
+    flattenData,
   };
 }
 

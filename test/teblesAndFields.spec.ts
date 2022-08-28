@@ -97,11 +97,9 @@ describe("Tables and fields", function () {
         expect(props.field.qListObjectDef.qDef.qFieldDefs[0]).to.be.equal(
           `${process.env.FIELD_TO_SELECT}`
         ) &&
-        expect(layout.field.qListObject.qDataPages.length).to.be.greaterThan(
-          0
-        ) &&
+        expect(layout.qListObject.qDataPages.length).to.be.greaterThan(0) &&
         expect(
-          layout.field.qListObject.qDataPages[0].qMatrix.length
+          layout.qListObject.qDataPages[0].qMatrix.length
         ).to.be.greaterThan(0) &&
         expect(objExists).to.be.false;
 

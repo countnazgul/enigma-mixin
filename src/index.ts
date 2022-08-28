@@ -117,12 +117,45 @@ declare global {
       ): Promise<EngineAPI.IGenericVariableProperties>;
       mCreateSessionListbox(
         fieldName: string,
-        state?: string,
-        type?: string
+        /**
+         * Additional options
+         */
+        options?: {
+          /**
+           * Create the object in specific state. Defaults to $
+           */
+          state?: string;
+          /**
+           * Type of the object. Defaults to session-listbox
+           */
+          type?: string;
+          /**
+           * Destroy the session object at the end
+           */
+          destroyOnComplete?: boolean;
+          /**
+           * By default the first 10 000 values will be extracted and returned. If need all set this option to true
+           */
+          getAllData?: boolean;
+        }
       ): Promise<{
+        /**
+         * Qlik object (returned from createSessionObject call)
+         */
         obj: EngineAPI.IGenericObject;
+        /**
+         * Qlik object layout (returned from getLayout() call)
+         */
         layout: IGenericBaseLayoutExt;
+        /**
+         * Qlik object properties (returned from getProperties() call)
+         */
         props: IGenericObjectPropertiesExt;
+        /**
+         * Function that returns the data in flat format
+         * by flattening qMatrix of each qDataPage
+         */
+        flattenData(): INxCellListBox[];
       }>;
       mGetTables(): Promise<string[]>;
       mGetTablesAndFields(): Promise<{ table: string; field: string }[]>;
@@ -210,6 +243,13 @@ export interface IUnbuildApp {
     | EngineAPI.IGenericObjectEntry
     | EngineAPI.IGenericObjectProperties
   )[];
+}
+
+export interface INxCellListBox {
+  qText: string;
+  qNum: number | undefined;
+  qElemNumber: number;
+  qState: EngineAPI.NxCellStateType;
 }
 
 export const docMixin = [
