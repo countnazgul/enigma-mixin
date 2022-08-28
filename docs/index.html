@@ -21,11 +21,6 @@
 <p><code>enigma.js</code> functionality can be extended via <a href="https://github.com/qlik-oss/enigma.js/blob/41c33604f7e384d0a34a502bd29e9f3db94dd9d2/docs/api.md#mixins">mixin</a>. This repository contains set of mixins that can be added to any <code>enigma.js</code> instance. Some of the mixins are quite trivial but I&#39;ve been lazy enough to remember the objects/params and decided to create these &quot;shortcuts&quot; :)</p>
 <p>btw who ever made the <code>mixin</code> option available in <code>enigma.js</code> ... Thank you!</p>
 
-<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
-  <h2>Requirements</h2>
-</a>
-<p>TBA</p>
-
 <a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
   <h2>Installation</h2>
 </a>
@@ -71,8 +66,9 @@
 <li>Selections</li>
 <li>TableAndFields</li>
 <li>Variables</li>
-<li>Extensions</li>
-<li>Build/Unbuild</li>
+<li>Extensions <strong>EXPERIMENTAL!!!</strong></li>
+<li>Build/Unbuild <strong>EXPERIMENTAL!!!</strong></li>
+<li>Bookmarks <strong>EXPERIMENTAL!!!</strong></li>
 </ul>
 
 <a href="#selections" id="selections" style="color: inherit; text-decoration: none;">
@@ -110,22 +106,40 @@
   <h3>TableAndFields</h3>
 </a>
 <ul>
-<li><code>mGetTablesAndFields</code> - returns an object array with the field &lt;-&gt; table relation<ul>
+<li><p><code>mGetTablesAndFields</code> - returns an object array with the field &lt;-&gt; table relation</p>
+<ul>
 <li>no parameters</li>
 </ul>
 </li>
-<li><code>mGetTables</code> - returns an array with all table names<ul>
+<li><p><code>mGetTables</code> - returns an array with all table names</p>
+<ul>
 <li>no parameters</li>
 </ul>
 </li>
-<li><code>mGetFields</code> - returns an array with all field names<ul>
+<li><p><code>mGetFields</code> - returns an array with all field names</p>
+<ul>
 <li>no parameters</li>
 </ul>
 </li>
-<li><code>mCreateSessionListbox</code> - creates a <strong>session</strong> listbox object for the specified field<ul>
-<li>fieldName</li>
+<li><p><code>mCreateSessionListbox</code> - creates a <strong>session</strong> listbox object for the specified field</p>
+<ul>
+<li><p>fieldName</p>
+</li>
+<li><p>options (<code>optional</code>)</p>
+<ul>
 <li>type - (<code>optional</code>; default <code>session-listbox</code>) - type of the listbox</li>
+<li>state - (<code>optional</code>; default <code>$</code>) - in which state to create the listbox</li>
+<li>destroyOnComplete - (<code>optional</code>) - if set to <code>true</code> once all the operations are complete the session object will &quot;self-destruct&quot;. All the info will be returned as normal</li>
+<li>getAllData - (<code>optional</code>) - if set to <code>true</code> all values will be extracted. Qlik can extract max 10 000 cells of data on a single call. If the data is more than 10 000 data cells paging have to be implemented to get all the data. This method by default will make the initial request with 10 000 cells as initial data fetch and if this argument is passed the method will determine if there is a need of paging and will request all the data from Qlik</li>
 </ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>
+Additionally to the <code>obj</code>, <code>prop</code> and <code>layout</code> this method will expose an extra function (<code>flattenData</code>) that can be used to flatten all the existing data. By default all data will be inside the returned <code>layout</code> property in its original format. Once <code>flattenData</code> function is called it will return all the data in array of <code>qMatrix</code> objects (easier to read/use in this format). To avoid duplication and increased resource usage (esp with fields with high number of distinct values) its up to the developer to decide when/if to call this function.</p>
+</blockquote>
+</li>
+<li><p><code>mGetSyntheticTables</code> - returns a subset of all data tables. The subset will contains data only for tables which are flagged with <code>qIsSynthetic = true</code></p>
 </li>
 </ul>
 
