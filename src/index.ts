@@ -35,6 +35,9 @@ import { mBuild } from "./mixins/doc/build";
 declare global {
   module EngineAPI {
     export interface IApp {
+      /**
+       * @experimental
+       */
       mUnbuild(
         sections?: (
           | "variables"
@@ -47,6 +50,9 @@ declare global {
           | "bookmarks"
         )[]
       ): Promise<IUnbuildApp>;
+      /**
+       * @experimental
+       */
       mBuild(arg: {
         variables?: EngineAPI.IGenericVariableProperties[];
         script?: string;
@@ -171,21 +177,39 @@ declare global {
         toggle?: boolean,
         state?: string
       ): Promise<boolean>;
+      /**
+       * @experimental
+       */
       mExtensionObjectsAll(): Promise<IExtension[]>;
+      /**
+       * @experimental
+       */
       mGetBookmarkMeta(
         bookmarkId: string,
         state?: string
       ): Promise<IMBookmarkMeta>;
+      /**
+       * @experimental
+       */
       mGetBookmarksMeta(state?: string): Promise<IMBookmarkMeta[]>;
+      /**
+       * @experimental
+       */
       mCreateBookmarkFromMeta(
         bookmarkMeta: IMBookmarkMeta,
         title: string,
         description?: string
       ): Promise<string>;
+      /**
+       * @experimental
+       */
       mGetBookmarkValues(
         bookmarkId: string,
         state?: string
       ): Promise<IBookmarkValue[]>;
+      /**
+       * @experimental
+       */
       mCloneBookmark(
         sourceBookmarkId: string,
         title: string,

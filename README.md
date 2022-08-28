@@ -8,10 +8,6 @@
 
 btw who ever made the `mixin` option available in `enigma.js` ... Thank you!
 
-## Requirements
-
-TBA
-
 ## Installation
 
 This project don't include `enigma.js` itself. Make sure that `enigma.js` is installed:
@@ -77,8 +73,9 @@ The available `mixin` are "grouped" in the following categories:
 - Selections
 - TableAndFields
 - Variables
-- Extensions
-- Build/Unbuild
+- Extensions **EXPERIMENTAL!!!**
+- Build/Unbuild **EXPERIMENTAL!!!**
+- Bookmarks **EXPERIMENTAL!!!**
 
 ### Selections
 
@@ -112,8 +109,19 @@ The available `mixin` are "grouped" in the following categories:
 - `mGetFields` - returns an array with all field names
   - no parameters
 - `mCreateSessionListbox` - creates a **session** listbox object for the specified field
+
   - fieldName
-  - type - (`optional`; default `session-listbox`) - type of the listbox
+  - options (`optional`)
+
+    - type - (`optional`; default `session-listbox`) - type of the listbox
+    - state - (`optional`; default `$`) - in which state to create the listbox
+    - destroyOnComplete - (`optional`) - if set to `true` once all the operations are complete the session object will "self-destruct". All the info will be returned as normal
+    - getAllData - (`optional`) - if set to `true` all values will be extracted. Qlik can extract max 10 000 cells of data on a single call. If the data is more than 10 000 data cells paging have to be implemented to get all the data. This method by default will make the initial request with 10 000 cells as initial data fetch and if this argument is passed the method will determine if there is a need of paging and will request all the data from Qlik
+
+  > **Note**
+  > Additionally to the `obj`, `prop` and `layout` this method will expose an extra function (`flattenData`) that can be used to flatten all the existing data. By default all data will be inside the returned `layout` property in its original format. Once `flattenData` function is called it will return all the data in array of `qMatrix` objects (easier to read/use in this format). To avoid duplication and increased resource usage (esp with fields with high number of distinct values) its up to the developer to decide when/if to call this function.
+
+- `mGetSyntheticTables` - returns a subset of all data tables. The subset will contains data only for tables which are flagged with `qIsSynthetic = true`
 
 ### Variables
 
