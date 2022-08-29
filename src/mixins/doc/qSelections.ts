@@ -95,38 +95,14 @@ export async function mSelectInField(
   if (!values)
     throw new Error(`mSelectInField: "values" parameter is required`);
 
-  const lbDef = {
-    qInfo: {
-      qId: "",
-      qType: "session-listbox",
-    },
-    field: {
-      qListObjectDef: {
-        qStateName: state ? state : "$",
-        qDef: {
-          qFieldDefs: [fieldName],
-          qSortCriterias: [
-            {
-              qSortByState: 1,
-              qExpression: {},
-            },
-          ],
-        },
-        qInitialDataFetch: [
-          {
-            qTop: 0,
-            qLeft: 0,
-            qHeight: 10000,
-            qWidth: 1,
-          },
-        ],
-      },
-    },
-  };
-
-  const sessionObj = await _this.createSessionObject(lbDef);
-
-  const layout = (await sessionObj.getLayout()) as IGenericBaseLayoutExt;
+  const { obj: sessionObj, layout } = await _this.mCreateSessionListbox(
+    fieldName,
+    {
+      destroyOnComplete: false,
+      getAllData: true,
+      state: state || "$",
+    }
+  );
 
   if (layout.qListObject?.qDimensionInfo.qError?.qErrorCode)
     throw new Error(
@@ -138,7 +114,7 @@ export async function mSelectInField(
     .map((e) => e[0].qElemNumber as number);
 
   const selection = await sessionObj.selectListObjectValues(
-    "/field/qListObjectDef",
+    "/qListObjectDef",
     index,
     toggle ? toggle : false
   );
