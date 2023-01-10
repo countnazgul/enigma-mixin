@@ -3,7 +3,6 @@
         "outDir": "./dist",
         "target": "ES6",
         "declaration": true,
-        "declarationDir": "./dist",
         "module": "ESNext",
         "noImplicitAny": false,
         "sourceMap": true,

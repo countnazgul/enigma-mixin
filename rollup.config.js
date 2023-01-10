@@ -1,8 +1,10 @@
-import typescript from "rollup-plugin-typescript2";
+import typescript from "@rollup/plugin-typescript";
 import del from "rollup-plugin-delete";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
-import pkg from "./package.json";
+import { readFileSync } from "fs";
+
+const pkg = JSON.parse(readFileSync("./package.json"));
 // import dts from "rollup-plugin-dts";
 
 export default {
@@ -10,7 +12,7 @@ export default {
   output: [
     {
       file: pkg.main,
-      format: "cjs",
+      format: "es",
       sourcemap: true,
     },
     ,
@@ -31,9 +33,7 @@ export default {
     del({
       targets: "dist/*",
     }),
-    typescript({
-      typescript: require("typescript"),
-    }),
+    typescript(),
     // dts(),
   ],
 };

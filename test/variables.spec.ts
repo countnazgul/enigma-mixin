@@ -1,11 +1,12 @@
 import path from "path";
-const dotEnvPath = path.resolve("./.env");
-require("dotenv").config({ path: dotEnvPath });
+const dotEnvPath = path.resolve(".env");
+import dotenv from "dotenv";
+dotenv.config({ path: dotEnvPath });
 
 import chai from "chai";
 import enigma from "enigma.js";
 import WebSocket from "ws";
-import schema from "enigma.js/schemas/12.612.0.json";
+import schema from "enigma.js/schemas/12.612.0.json" assert { type: "json" };
 
 import { docMixin } from "../src";
 
