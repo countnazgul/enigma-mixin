@@ -1,6 +1,6 @@
 {
   "name": "enigma-mixin",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Set of Qlik Sense enigma.js mixin",
   "author": {
     "email": "stefan.stoichev@gmail.com",
@@ -15,7 +15,7 @@
   },
   "engineStrict": true,
   "scripts": {
-    "test": "set TS_NODE_PROJECT=tsconfig.test.json&mocha --require ts-node/register test/**/*.spec.ts --loader=ts-node/esm --no-warnings=ExperimentalWarning --experimental-specifier-resolution=node --ignore test/playground.spec.ts",
+    "test": "vitest run",
     "build-test": "rollup --config",
     "build-prod": "rollup -c && cross-env NODE_ENV=production rollup -c",
     "build": "rollup -c",
@@ -42,26 +42,25 @@
     "qlik-sense-desktop"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^24.0.0",
-    "@rollup/plugin-json": "^6.0.0",
-    "@types/chai": "^4.3.4",
-    "@types/enigma.js": "^2.2.2",
-    "@types/mocha": "^10.0.1",
-    "@types/qlik-engineapi": "^12.67.12",
-    "chai": "^4.3.7",
-    "dotenv": "^16.0.3",
-    "enigma.js": "^2.10.0",
-    "mocha": "^10.2.0",
-    "rollup": "^3.9.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/enigma.js": "^2.2.5",
+    "@types/qlik-engineapi": "^12.67.16",
+    "dotenv": "^16.3.1",
+    "enigma.js": "^2.12.0",
+    "rollup": "^4.9.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-delete": "^2.0.0",
-    "ts-node": "^10.9.1",
-    "typedoc": "^0.23.24",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "typedoc": "^0.25.4",
     "typescript": "^4.9.4",
-    "ws": "^8.12.0"
+    "vitest": "^0.34.6",
+    "ws": "^8.15.1"
   },
   "dependencies": {
-    "@rollup/plugin-typescript": "^11.0.0",
-    "tslib": "^2.4.1"
+    "banditypes": "^0.2.5"
   }
 }

@@ -1,4 +1,10 @@
+import { string, boolean } from "banditypes";
+
 import { IGenericBaseLayout } from "../../index.doc";
+import {
+  validateSelectInField,
+  validateSelectInFieldBySearch,
+} from "./validations/selections";
 
 export interface IGenericBaseLayoutExt extends IGenericBaseLayout {
   qListObject: {
@@ -82,25 +88,62 @@ export async function mSelectionsSimpleGrouped(): Promise<
     .flat();
 }
 
-export async function mSelectInField(
+export async function mSelectInFieldBySearch(
   fieldName: string,
-  values: any[],
+  searchTerm: string,
   toggle?: boolean,
   state?: string
 ): Promise<boolean> {
   const _this: EngineAPI.IApp = this;
 
-  if (!fieldName)
-    throw new Error(`mSelectInField: "fieldName" parameter is required`);
-  if (!values)
-    throw new Error(`mSelectInField: "values" parameter is required`);
+  const { defaultedState, defaultedToggle } =
+    validateSelectInFieldBySearch(arguments);
+
+  let { obj: sessionObj, layout } = await _this.mCreateSessionListbox(
+    fieldName,
+    {
+      state: defaultedState,
+    }
+  );
+
+  if (layout.qListObject?.qDimensionInfo.qError?.qErrorCode)
+    throw new Error(
+      `Field "${fieldName}" do not exists. Error code: ${layout.qListObject.qDimensionInfo.qError.qErrorCode}`
+    );
+
+  const searchResponse = await sessionObj.searchListObjectFor(
+    "/qListObjectDef",
+    searchTerm
+  );
+
+  if (!searchResponse)
+    throw new Error(
+      `Error while searching the field "${fieldName}" for "${searchTerm}"`
+    );
+
+  await sessionObj.acceptListObjectSearch("/qListObjectDef", defaultedToggle);
+
+  await _this.destroySessionObject(sessionObj.id);
+
+  return searchResponse;
+}
+
+export async function mSelectInField(
+  fieldName: string,
+  values: (string | number)[],
+  toggle?: boolean,
+  state?: string
+) {
+  const _this: EngineAPI.IApp = this;
+
+  const { defaultedState, defaultedToggle } = validateSelectInField(arguments);
 
   const { obj: sessionObj, layout } = await _this.mCreateSessionListbox(
     fieldName,
     {
       destroyOnComplete: false,
       getAllData: true,
-      state: state || "$",
+      state: defaultedState,
     }
   );
 
@@ -116,10 +159,16 @@ export async function mSelectInField(
   const selection = await sessionObj.selectListObjectValues(
     "/qListObjectDef",
     index,
-    toggle ? toggle : false
+    defaultedToggle
   );
 
-  await _this.destroySessionObject(sessionObj.id);
+  // async function selectMore() {
+  //   //
+  // }
 
-  return selection;
+  async function destroy() {
+    await _this.destroySessionObject(sessionObj.id);
+  }
+
+  return { selection, destroy };
 }

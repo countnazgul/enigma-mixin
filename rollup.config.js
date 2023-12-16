@@ -1,6 +1,7 @@
 import typescript from "@rollup/plugin-typescript";
 import del from "rollup-plugin-delete";
 import commonjs from "@rollup/plugin-commonjs";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
 import { readFileSync } from "fs";
 
@@ -24,10 +25,11 @@ export default {
     },
   ],
   external: [
-    ...Object.keys(pkg.dependencies || {}),
-    ...Object.keys(pkg.peerDependencies || {}),
+    // ...Object.keys(pkg.dependencies || {}),
+    // ...Object.keys(pkg.peerDependencies || {}),
   ],
   plugins: [
+    nodeResolve(),
     commonjs(),
     json(),
     del({

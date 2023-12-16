@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "appprops",
+        "banditypes",
         "barchart",
         "boxplot",
         "builtins",
@@ -22,10 +23,5 @@
         "slideitem",
         "sort",
         "treemap"
-    ],
-    "mochaExplorer.nodeArgv": [
-        "--loader=ts-node/esm",
-        "--no-warnings=ExperimentalWarning",
-        "--experimental-specifier-resolution=node",
-    ],
+    ]
 }

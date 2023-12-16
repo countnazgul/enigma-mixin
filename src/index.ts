@@ -17,6 +17,7 @@ import {
   mSelectInField,
   mSelectionsAll,
   mSelectionsFields,
+  mSelectInFieldBySearch,
   mSelectionsSimple,
   mSelectionsSimpleGrouped,
 } from "./mixins/doc/qSelections";
@@ -176,6 +177,32 @@ declare global {
         values: any[],
         toggle?: boolean,
         state?: string
+      ): Promise<{
+        selection: boolean;
+        selectMore: void;
+        destroy: void;
+      }>;
+      /**
+       * Select values in a field by search criteria.
+       * The search criteria result is automatically accepted.
+       */
+      mSelectInFieldBySearch(
+        /**
+         *
+         */
+        fieldName: string,
+        /**
+         * What to search for
+         */
+        searchTerm: string,
+        /**
+         * Set to true to keep any selections present in the list object. If missing then "false" is assumed
+         */
+        toggle?: boolean,
+        /**
+         * In which state to make the selection. If missing then "$" is used
+         */
+        state?: string
       ): Promise<boolean>;
       /**
        * @experimental
@@ -282,6 +309,7 @@ export const docMixin = [
     init(args) {},
     extend: {
       mSelectInField,
+      mSelectInFieldBySearch,
       mSelectionsAll,
       mSelectionsFields,
       mSelectionsSimple,
