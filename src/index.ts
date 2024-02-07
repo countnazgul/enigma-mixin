@@ -1,3 +1,5 @@
+import EventEmitter from "node-event-emitter";
+
 import {
   mVariableCreate,
   mVariableGetAll,
@@ -32,6 +34,8 @@ import {
 
 import { mUnbuild } from "./mixins/doc/unbuild";
 import { mBuild } from "./mixins/doc/build";
+
+import { mGetReloadProgress } from "./mixins/global/mGetReloadProgress";
 
 declare global {
   module EngineAPI {
@@ -248,6 +252,34 @@ declare global {
         qBookmarkId?: string
       ): Promise<string>;
     }
+
+    export interface IGlobal {
+      /**
+       * Get reload progress in human readable form - similar to what Qlik outputs when app is being reloaded
+       * @param {number} [options.qRequestId=-1] identifier of the DoReload or DoSave request. Default is -1
+       */
+      mGetReloadProgress(qRequestId?: string): {
+        emitter: EventEmitter;
+        /**
+         * Start pooling Qlik for the reload progress. Emit each message via the "emitter" property.
+         * Once the reload is complete dont forget to call "stop()" method to stop the pooling and clear
+         * the memory
+         * @param {Object} [options] - additional options
+         * @param {number} [options.poolInterval=200] how ofter to get the reload progress. Default is 200ms
+         * @param {boolean} [options.skipTransientMessages=false] show only the main messages. Default is false
+         * @param {boolean} [options.includeTimeStamp=false] show timestamp for each message. Default is false
+         */
+        start(options?: {
+          poolInterval?: number;
+          skipTransientMessages?: boolean;
+          includeTimeStamp?: boolean;
+        }): void;
+        /**
+         * Once the reload is complete stop getting the reload progress
+         */
+        stop(): void;
+      };
+    }
   }
 }
 
@@ -331,6 +363,16 @@ export const docMixin = [
       mGetBookmarkMeta,
       mGetBookmarkValues,
       mGetBookmarksMeta,
+    },
+  },
+];
+
+export const globalMixin = [
+  {
+    types: ["Global"],
+    init(args) {},
+    extend: {
+      mGetReloadProgress,
     },
   },
 ];

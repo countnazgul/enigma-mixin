@@ -10,65 +10,89 @@ btw who ever made the `mixin` option available in `enigma.js` ... Thank you!
 
 ## Installation
 
-This project don't include `enigma.js` itself. Make sure that `enigma.js` is installed:
+This project don't include `enigma.js` itself. Make sure that `enigma.js` is installed first:
 
-> `npm install enigma.js`
+`npm install enigma.js`
 
-Once `enigma.js` is installed, install the mixins:
+Then install the mixins:
 
-> `npm install enigma-mixins`
+`npm install enigma-mixins`
+
+> **Note**
+> For Node.js `ws` package should be installed as well. And import it:
+> `import WebSocket from 'ws'`
 
 ## Init
-
-### Browser usage
 
 ```javascript
 import enigma from "enigma.js";
 import schema from "enigma.js/schemas/12.20.0.json";
-import enigmaMixins from "enigma-mixins";
+import { docMixin, globalMixin } from "enigma-mixins";
 
 // Create enigma session as usual
 // but include the mixin property
 const session = enigma.create({
   schema,
-  mixins: [enigmaMixins],
+  // load the required mixins here
+  mixins: [...docMixin, ...globalMixin],
   url: "ws://localhost:4848/app/engineData",
   createSocket: (url) => new WebSocket(url),
 });
 ```
 
-### Node JS usage
+## Available mixins
 
-```javascript
-const enigma = require("enigma.js");
-const WebSocket = require("ws");
-const schema = require("enigma.js/schemas/12.20.0.json");
-const enigmaMixins = require("enigma-mixins");
+### Global
 
-const session = enigma.create({
-  schema,
-  mixins: [enigmaMixins],
-  url: "ws://localhost:4848/app/engineData",
-  createSocket: (url) => new WebSocket(url),
-});
-```
+At the moment only one `global` mixin is available:
 
-## Usage
+- `mGetReloadProgress` **EXPERIMENTAL!!!** - get the reload progress log while reloading an app
 
-At the moment this project includes only mixins that are extending the `enigma.js` `Doc` object. After the mixin is imported a new set of functions will be available in the `Doc` instance.
+  ```js
+  // establish connection and open an app ... as usual
+  const global = await session.open();
+  const doc = await global.openDoc("some-app-id");
 
-```javascript
-let global = await session.open();
-let qDoc = await global.openDoc("/data/Helpdesk Management.qvf");
-```
+  // init the mixin
+  const reloadProgress = global.mGetReloadProgress();
 
-After this `qDoc` will have all the mixins available
+  // prepare the emitter
+  reloadProgress.emitter.on("progress", (msg) => {
+    // here we will receive the reload messages
+    // do whatever you have to do with them :)
+    console.log(msg);
+  });
 
-![mixin](./src/images/mixin.png)
+  const reloadApp = await new Promise(function (resolve, reject) {
+    // or doc.doReloadEx
+    // DO NOT "await" doReload or doReloadEx
+    // if await them then pooling for reload progress messaged
+    // will be started after the app finished reloading
+    doc.doReload().then((r) => {
+      // stop the mixin from pooling for new messages.
+      // The app reload is already complete at this point
+      reloadProgress.stop();
+      // resolve the main promise
+      resolve(r);
+    });
 
-## Mixins
+    // see below for available (optional) options that can be passed
+    reloadProgress.start();
+  });
+  ```
 
-The available `mixin` are "grouped" in the following categories:
+  - `mGetReloadProgress(qRequestId)` - `number` - **optional** parameter to provide `qRequestId`. Default is `-1`
+  - `start({...})` - **optional** object with few **optional** properties:
+    - `poolInterval` - `number` - how often to pool for new reload messages. Default is `200` (ms),
+    - `skipTransientMessages` - `boolean` - Qlik returns two type of messages - persistent and transient. Persistent messages are the ones that stating which table is started loading, when table is loaded then how many rows are loaded etc. Transient messages are the ones that display how many rows were loaded so far. For example if we are loading table with 1M rows then transient messages will be like: `5025`, `120124`, `500003` ... `1000000`. To ignore these messages set this option to `true`. Default is `false`
+    - `includeTimeStamp` - `boolean` - include the current timestamp for each message. This is the timestamp when the message "arrives" and not when the message was send. Default is `false`
+
+> **Note**
+> At the moment not all types of messages are known. Once I have/find the list of the message types the reload log will looks better. Its not a massive issue but the moment some messages can be `UNDEFINED MESSAGE CODE! <the meaningful message>`. Check the [Qlik community](https://community.qlik.com/t5/Integration-Extension-APIs/Engine-API-global-getProgress-qMessageCode-values/m-p/2415677#M19807) question for an update
+
+### Doc
+
+The available doc `mixin` are "grouped" in the following categories:
 
 - Selections
 - TableAndFields
