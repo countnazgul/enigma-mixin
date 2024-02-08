@@ -268,11 +268,13 @@ declare global {
          * @param {number} [options.poolInterval=200] how ofter to get the reload progress. Default is 200ms
          * @param {boolean} [options.skipTransientMessages=false] show only the main messages. Default is false
          * @param {boolean} [options.includeTimeStamp=false] show timestamp for each message. Default is false
+         * @param {boolean} [options.trimLeadingMessage=false] Some default messages have a leading space. This setting will trim it. Default is false
          */
         start(options?: {
           poolInterval?: number;
           skipTransientMessages?: boolean;
           includeTimeStamp?: boolean;
+          trimLeadingMessage?: boolean;
         }): void;
         /**
          * Once the reload is complete stop getting the reload progress

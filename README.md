@@ -69,11 +69,14 @@ At the moment only one `global` mixin is available:
     // if await them then pooling for reload progress messaged
     // will be started after the app finished reloading
     doc.doReload().then((r) => {
-      // stop the mixin from pooling for new messages.
-      // The app reload is already complete at this point
-      reloadProgress.stop();
-      // resolve the main promise
-      resolve(r);
+      // give it another few ms to make sure we have all the messages
+      setTimeout(function () {
+        // stop the mixin from pooling for new messages.
+        // The app reload is already complete at this point
+        reloadProgress.stop();
+        // resolve the main promise
+        resolve(r);
+      }, 300);
     });
 
     // see below for available (optional) options that can be passed
@@ -86,9 +89,10 @@ At the moment only one `global` mixin is available:
     - `poolInterval` - `number` - how often to pool for new reload messages. Default is `200` (ms),
     - `skipTransientMessages` - `boolean` - Qlik returns two type of messages - persistent and transient. Persistent messages are the ones that stating which table is started loading, when table is loaded then how many rows are loaded etc. Transient messages are the ones that display how many rows were loaded so far. For example if we are loading table with 1M rows then transient messages will be like: `5025`, `120124`, `500003` ... `1000000`. To ignore these messages set this option to `true`. Default is `false`
     - `includeTimeStamp` - `boolean` - include the current timestamp for each message. This is the timestamp when the message "arrives" and not when the message was send. Default is `false`
+    - `trimLeadingMessage` - some of the default messages have a leading space. Setting this option to `true` will remove the leading space. Default is `false`
 
 > **Note**
-> At the moment not all types of messages are known. Once I have/find the list of the message types the reload log will looks better. Its not a massive issue but the moment some messages can be `UNDEFINED MESSAGE CODE! <the meaningful message>`. Check the [Qlik community](https://community.qlik.com/t5/Integration-Extension-APIs/Engine-API-global-getProgress-qMessageCode-values/m-p/2415677#M19807) question for an update
+> Its possible that the message types list is incomplete. Its not a massive issue but the moment some messages can be `UNKNOWN MESSAGE CODE! <the meaningful message>`. Check the [Qlik community](https://community.qlik.com/t5/Integration-Extension-APIs/Engine-API-global-getProgress-qMessageCode-values/m-p/2415677#M19807) question for an update
 
 ### Doc
 
