@@ -1,5 +1,14 @@
 import EventEmitter from "node-event-emitter";
 
+function getTimestamp() {
+  const pad = (n, s = 2) => `${new Array(s).fill(0)}${n}`.slice(-s);
+  const d = new Date();
+
+  return `${pad(d.getFullYear(), 4)}-${pad(d.getMonth() + 1)}-${pad(
+    d.getDate()
+  )} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
 export function mGetReloadProgress(qRequestId?: number) {
   const _this: EngineAPI.IGlobal = this;
   const emitter = new EventEmitter();
@@ -63,9 +72,12 @@ export function mGetReloadProgress(qRequestId?: number) {
           _this.getProgress(qRequestId ?? -1).then(function (msg) {
             if (msg.qPersistentProgressMessages) {
               msg.qPersistentProgressMessages.map((m) => {
-                const message = options.trimLeadingMessage
+                let message = options.trimLeadingMessage
                   ? messageCodes[m.qMessageCode].trimStart()
                   : messageCodes[m.qMessageCode];
+
+                if (options.includeTimeStamp)
+                  message = `${getTimestamp()} ${message}`;
 
                 emitter.emit(
                   "progress",
@@ -75,11 +87,15 @@ export function mGetReloadProgress(qRequestId?: number) {
             }
 
             if (msg.qTransientProgressMessage && msg.qTransientProgress) {
-              if (!options.skipTransientMessages)
-                emitter.emit(
-                  "progress",
-                  `${msg.qTransientProgressMessage.qMessageParameters[0] ?? ""}`
-                );
+              if (!options.skipTransientMessages) {
+                let message =
+                  msg.qTransientProgressMessage.qMessageParameters[0] ?? "";
+
+                if (options.includeTimeStamp)
+                  message = `${getTimestamp()} ${message}`;
+
+                emitter.emit("progress", `${message}`);
+              }
             }
           });
         } else {
