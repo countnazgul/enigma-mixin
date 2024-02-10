@@ -63,6 +63,20 @@ At the moment only one `global` mixin is available:
     console.log(msg);
   });
 
+  // prepare the on error emitter
+  // errors will be emitted by Qlik if configureReload is set correctly (see below)
+  reloadProgress.emitter.on("error", (errorMessage) => {
+    // any script errors can be handled here
+    // FYI on progress will also receive the errors messages
+    // just so we can have the complete reload log in one place
+    console.log(errorMessage);
+  });
+
+  // optional
+  // if qUseErrorData is true then onError event will be triggered if the reload is failing
+  // https://help.qlik.com/en-US/sense-developer/November2023/Subsystems/EngineJSONAPI/Content/service-global-configurereload.htm
+  await global.configureReload(true, true, false);
+
   const reloadApp = await new Promise(function (resolve, reject) {
     // or doc.doReloadEx
     // DO NOT "await" doReload or doReloadEx

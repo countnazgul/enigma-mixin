@@ -97,6 +97,15 @@ export function mGetReloadProgress(qRequestId?: number) {
                 emitter.emit("progress", `${message}`);
               }
             }
+
+            if (msg.qErrorData.length > 0) {
+              const errorString = msg.qErrorData
+                .map((qed) => qed.qErrorString)
+                .join("\n");
+
+              emitter.emit("progress", `${errorString}`);
+              emitter.emit("error", `${errorString}`);
+            }
           });
         } else {
           clearInterval(progress);
