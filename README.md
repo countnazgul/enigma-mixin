@@ -46,7 +46,11 @@ const session = enigma.create({
 
 At the moment only one `global` mixin is available:
 
-- `mGetReloadProgress` **EXPERIMENTAL!!!** - get the reload progress log while reloading an app
+- `mGetReloadProgress` - get the reload progress log while reloading an app
+
+  When used this mixin can produce the same result as Qlik's native reload progress messages:
+
+  ![qlik script and mixin result](.\src\images\mGetReloadProgress.png)
 
   ```js
   // establish connection and open an app ... as usual
@@ -104,9 +108,6 @@ At the moment only one `global` mixin is available:
     - `skipTransientMessages` - `boolean` - Qlik returns two type of messages - persistent and transient. Persistent messages are the ones that stating which table is started loading, when table is loaded then how many rows are loaded etc. Transient messages are the ones that display how many rows were loaded so far. For example if we are loading table with 1M rows then transient messages will be like: `5025`, `120124`, `500003` ... `1000000`. To ignore these messages set this option to `true`. Default is `false`
     - `includeTimeStamp` - `boolean` - include the current timestamp for each message. This is the timestamp when the message "arrives" and not when the message was send. Default is `false`
     - `trimLeadingMessage` - some of the default messages have a leading space. Setting this option to `true` will remove the leading space. Default is `false`
-
-> **Note**
-> Its possible that the message types list is incomplete. Its not a massive issue but the moment some messages can be `UNKNOWN MESSAGE CODE! <the meaningful message>`. Check the [Qlik community](https://community.qlik.com/t5/Integration-Extension-APIs/Engine-API-global-getProgress-qMessageCode-values/m-p/2415677#M19807) question for an update
 
 ### Doc
 
