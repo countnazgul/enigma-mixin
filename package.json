@@ -1,6 +1,6 @@
 {
   "name": "enigma-mixin",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "Set of Qlik Sense enigma.js mixin",
   "author": {
     "email": "stefan.stoichev@gmail.com",
@@ -42,23 +42,23 @@
     "qlik-sense-desktop"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/enigma.js": "^2.2.5",
     "@types/qlik-engineapi": "^12.67.16",
-    "dotenv": "^16.4.1",
-    "enigma.js": "^2.12.0",
-    "rollup": "^4.9.6",
+    "dotenv": "^16.4.5",
+    "enigma.js": "^2.14.0",
+    "rollup": "^4.18.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-delete": "^2.0.0",
     "ts-node": "^10.9.2",
-    "tslib": "^2.6.2",
-    "typedoc": "^0.25.7",
+    "tslib": "^2.6.3",
+    "typedoc": "^0.26.3",
     "typescript": "^4.9.4",
     "vitest": "^0.34.6",
-    "ws": "^8.16.0"
+    "ws": "^8.17.1"
   },
   "dependencies": {
     "banditypes": "^0.2.5",
