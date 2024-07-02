@@ -32,6 +32,8 @@ import {
   mGetBookmarksMeta,
 } from "./mixins/doc/bookmarks";
 
+import { mGetAllData, mGetAllDataMatrix } from "./mixins/object/getAllData";
+
 import { mUnbuild } from "./mixins/doc/unbuild";
 import { mBuild } from "./mixins/doc/build";
 
@@ -282,6 +284,17 @@ declare global {
         stop(): void;
       };
     }
+
+    export interface IGenericObject {
+      /**
+       * Paginate through all the object data and returns array of qMatrix
+       */
+      mGetAllDataMatrix(): Promise<EngineAPI.INxCellRows[]>;
+      /**
+       * Paginate through all the object data and returns array of the values
+       */
+      mGetAllData(): Promise<any[]>;
+    }
   }
 }
 
@@ -375,6 +388,17 @@ export const globalMixin = [
     init(args) {},
     extend: {
       mGetReloadProgress,
+    },
+  },
+];
+
+export const objectMixin = [
+  {
+    types: ["GenericObject"],
+    init(args) {},
+    extend: {
+      mGetAllData,
+      mGetAllDataMatrix,
     },
   },
 ];
