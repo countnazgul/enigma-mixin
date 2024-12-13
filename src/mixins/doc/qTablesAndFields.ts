@@ -200,3 +200,26 @@ export async function mGetSyntheticTables(): Promise<EngineAPI.ITableRecord[]> {
 
   return tables.qtr.filter((t) => t.qIsSynthetic && t.qIsSynthetic == true);
 }
+
+export async function mGetAlwaysOneSelectedFields() {
+  const _this: EngineAPI.IApp = this;
+
+  const fields = await _this.mGetFields();
+
+  const alwaysOneSelectedFields = await Promise.all(
+    fields.map((field) => {
+      return _this
+        .getField(field)
+        .then((f) => f.getNxProperties())
+        .then((p) => {
+          if (p.hasOwnProperty("qOneAndOnlyOne") && p.qOneAndOnlyOne == true) {
+            return field;
+          } else {
+            return undefined;
+          }
+        });
+    })
+  ).then((fields) => fields.filter((f) => f != undefined));
+
+  return alwaysOneSelectedFields;
+}
