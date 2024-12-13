@@ -13,6 +13,7 @@ import {
   mGetTables,
   mGetTablesAndFields,
   mGetSyntheticTables,
+  mGetAlwaysOneSelectedFields,
 } from "./mixins/doc/qTablesAndFields";
 import {
   IGenericBaseLayoutExt,
@@ -31,6 +32,8 @@ import {
   mGetBookmarkValues,
   mGetBookmarksMeta,
 } from "./mixins/doc/bookmarks";
+
+import { mEmptyApp } from "./mixins/doc/emptyApp";
 
 import { mGetAllData, mGetAllDataMatrix } from "./mixins/object/getAllData";
 
@@ -174,6 +177,7 @@ declare global {
       mGetTablesAndFields(): Promise<{ table: string; field: string }[]>;
       mGetFields(): Promise<string[]>;
       mGetSyntheticTables(): Promise<EngineAPI.ITableRecord[]>;
+      mGetAlwaysOneSelectedFields(): Promise<string[]>;
       mSelectionsAll(): Promise<EngineAPI.ISelectionListObject>;
       mSelectionsSimple(): Promise<{ field: string; values: string[] }[]>;
       mSelectionsSimpleGrouped(): Promise<{ field: string; value: string }[]>;
@@ -253,6 +257,26 @@ declare global {
         qStateName?: string,
         qBookmarkId?: string
       ): Promise<string>;
+      /**
+       * @experimental
+       *
+       * Removes the data from the app. If "keepOneSelected" is set to "true"
+       * Then the app will contain a record for each field which is "always one selected".
+       * This way the checkbox will be preserved.
+       *
+       * The data is purged by temporary replacing the script with an empty one and
+       * reloading the app. Once the reload is complete (and the data is no more) then
+       * the original script is brought back and the app is saved
+       */
+      mEmptyApp(
+        /**
+         * If set to true the resulted app will contain data only for the
+         * fields that are "always one selected". These fields will contain
+         * only one record/value - the current timestamp. This way the
+         * "always one selected" checkbox will be preserved
+         */
+        keepOneSelected?: boolean
+      ): Promise<boolean>;
     }
 
     export interface IGlobal {
@@ -370,6 +394,7 @@ export const docMixin = [
       mGetTables,
       mGetTablesAndFields,
       mGetSyntheticTables,
+      mGetAlwaysOneSelectedFields,
       mExtensionObjectsAll,
       mBuild,
       mUnbuild,
@@ -378,6 +403,7 @@ export const docMixin = [
       mGetBookmarkMeta,
       mGetBookmarkValues,
       mGetBookmarksMeta,
+      mEmptyApp,
     },
   },
 ];

@@ -151,6 +151,7 @@ The available doc `mixin` are "grouped" in the following categories:
   - no parameters
 - `mGetFields` - returns an array with all field names
   - no parameters
+- `mGetAlwaysOneSelectedFields` - returns an string array with all fields for which `qOneAndOnlyOne` is `true`
 - `mCreateSessionListbox` - creates a **session** listbox object for the specified field
 
   - fieldName
@@ -255,6 +256,17 @@ let build = await qDoc.mBuild(data).catch(function (e) {
   // do something with the error here
 });
 ```
+
+### Empty app
+
+- `mEmptyApp` - purge the data from the app
+  - `keepOneSelected` - `optional` `boolean` - if present and set to `true` this mixin will preserve the fields for which `qOneAndOnlyOne` is set to `true`. The mixin will do that by:
+    - first get a list of all the fields that are matching that criteria
+    - gets the current script and keeps it in a temporary variable
+    - then it will replace the script by a custom script that just creates the required fields with just 1 record into them. Having the field and (at least) one record into it will preserve the `qOneAndOnlyOne` checkbox
+    - then it will reload the app
+    - replace the custom script with the original one
+    - saves the app
 
 ## Methods
 
