@@ -31,6 +31,7 @@ import {
   mGetBookmarkMeta,
   mGetBookmarkValues,
   mGetBookmarksMeta,
+  mGetDefaultBookmarkId,
 } from "./mixins/doc/bookmarks";
 
 import { mEmptyApp } from "./mixins/doc/emptyApp";
@@ -232,6 +233,10 @@ declare global {
       /**
        * @experimental
        */
+      mGetDefaultBookmarkId(): Promise<string>;
+      /**
+       * @experimental
+       */
       mCreateBookmarkFromMeta(
         bookmarkMeta: IMBookmarkMeta,
         title: string,
@@ -403,6 +408,7 @@ export const docMixin = [
       mGetBookmarkMeta,
       mGetBookmarkValues,
       mGetBookmarksMeta,
+      mGetDefaultBookmarkId,
       mEmptyApp,
     },
   },

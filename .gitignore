@@ -10,3 +10,4 @@ playground.spec.ts
 dist/
 temp/
 .env
+temp.txt

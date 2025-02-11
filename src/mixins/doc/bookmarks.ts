@@ -115,7 +115,6 @@ export async function getBookmarkMeta(
   qDoc: EngineAPI.IApp
 ) {
   const bookmark = await qDoc.getBookmark(bookmarkId);
-
   const [properties, layout, setAnalysisRaw] = await Promise.all([
     await bookmark.getProperties(),
     await bookmark.getLayout(),
@@ -172,8 +171,9 @@ function destructSetAnalysis(setAnalysisRaw: string): {
   values: string | EngineAPI.IFieldValue;
   type: string;
 }[] {
+  let t = /^\<(.*)(.*>)/g.exec(setAnalysisRaw);
   // remove "<" and ">" from the start and the end of the string
-  setAnalysisRaw = /\<(.*?)\>/g.exec(setAnalysisRaw)[1];
+  setAnalysisRaw = /^\<(.*)(.*>)/g.exec(setAnalysisRaw)[1];
 
   // split by "}," but keeping the separator in the result string
   const regexSplit = /(?<=\},)/;
@@ -184,7 +184,12 @@ function destructSetAnalysis(setAnalysisRaw: string): {
 
     // get the value between { and }
     const regexValues = /\{(.*?)\}/;
-    const valueRaw = `${regexValues.exec(s)[1]}`;
+    let valueRaw = "";
+    try {
+      valueRaw = `${regexValues.exec(s)[0]}`;
+    } catch (e) {
+      let a = 1;
+    }
 
     let type: string = "";
     let values: string | EngineAPI.IFieldValue;
@@ -282,4 +287,52 @@ async function selectExpressionValues(qApp: EngineAPI.IApp, s) {
     Object.keys(makeSelection).length === 0
     ? true
     : false;
+}
+
+export async function mGetDefaultBookmarkId(): Promise<string> {
+  const _this: EngineAPI.IApp = this;
+
+  const propsObj: EngineAPI.IGenericProperties = {
+    qInfo: {
+      qId: "AppPropsList",
+      qType: "AppPropsList",
+    },
+    qAppObjectListDef: {
+      qType: "appprops",
+      qData: {
+        sheetTitleBgColor: "/sheetTitleBgColor",
+        sheetTitleGradientColor: "/sheetTitleGradientColor",
+        sheetTitleColor: "/sheetTitleColor",
+        sheetLogoThumbnail: "/sheetLogoThumbnail",
+        sheetLogoPosition: "/sheetLogoPosition",
+        rtl: "/rtl",
+        theme: "/theme",
+        disableCellNavMenu: "/disableCellNavMenu",
+        disableCellContextMenu: "/disableCellContextMenu",
+        chartAnimations: "/chartAnimations",
+      },
+    },
+  };
+
+  const propsListObject = await _this.createSessionObject(propsObj);
+  const propsListLayout = await propsListObject.getLayout();
+
+  // no default bookmark (or even appprops in that matter)
+  if ((propsListLayout as any).qAppObjectList.qItems.length == 0) {
+    await _this.destroySessionObject(propsListObject.id);
+    return "";
+  }
+
+  const propsObjectId = (propsListLayout as any).qAppObjectList.qItems.filter(
+    (i) => i.qInfo.qType == "appprops"
+  )[0].qInfo.qId;
+
+  await _this.destroySessionObject(propsListObject.id);
+
+  const propsObject = await _this.getObject(propsObjectId);
+  const defaultBookmarkId = await propsObject
+    .getLayout()
+    .then((l) => (l as any).defaultBookmarkId);
+
+  return defaultBookmarkId;
 }
